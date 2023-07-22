@@ -4,7 +4,16 @@
 }
 
 .skr-draw {
-  .canvas {
+  position: relative;
+
+  .display {
+    border: 1px solid black;
+  }
+
+  .cursor {
+    position: absolute;
+    left: 0;
+    top: 0;
     border: 1px solid black;
   }
 }

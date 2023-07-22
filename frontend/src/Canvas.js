@@ -16,7 +16,7 @@ const throttle = (callback, delay) => {
 };
 
 export default function Canvas({ drawerId }) {
-  const canvasRef = useRef(null);
+  const displayRef = useRef(null);
   const cursorRef = useRef(null);
 
   const [color, setColor] = useState("black");
@@ -43,23 +43,16 @@ export default function Canvas({ drawerId }) {
   }, [eraserSize]);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const context = canvas.getContext("2d");
-    context.lineCap = "round";
+    const display = displayRef.current;
+    const displayCtx = display.getContext("2d");
+    displayCtx.lineCap = "round";
+
+    const cursor = cursorRef.current;
+    const cursorCtx = display.getContext("2d");
+    cursorCtx.lineCap = "round";
+
     let isDrawing = false;
-
-    const cursor = { x: 666999, y: 666999 };
-
-    const drawLine = (x0, y0, x1, y1, color) => {
-      context.beginPath();
-      context.moveTo(x0, y0);
-      context.lineTo(x1, y1);
-      context.strokeStyle = color;
-      context.lineWidth =
-        color === "white" ? eraserSizeRef.current : brushSizeRef.current;
-      context.stroke();
-      context.closePath();
-    };
+    const position = { x: 666999, y: 666999 };
 
     const emitDraw = (x1, y1) => {
       // Only allow drawer to send draws when that becomes supported
@@ -70,8 +63,8 @@ export default function Canvas({ drawerId }) {
       socket.emit("draw", {
         type: "DRAW",
         data: {
-          x0: cursor.x,
-          y0: cursor.y,
+          x0: position.x,
+          y0: position.y,
           x1,
           y1,
           color: colorRef.current,
@@ -79,20 +72,42 @@ export default function Canvas({ drawerId }) {
       });
     };
 
+    const emitCursor = (x, y) => {
+      // Only allow drawer to send draws when that becomes supported
+      // if (socket.id !== drawerIdRef.current) {
+      //   return;
+      // }
+
+      socket.emit("draw", {
+        type: "CURSOR",
+        data: {
+          x,
+          y,
+          color: colorRef.current,
+          size:
+            colorRef.current === "white"
+              ? eraserSizeRef.current
+              : brushSizeRef.current,
+        },
+      });
+    };
+
     const onMouseDown = (e) => {
       isDrawing = true;
-      cursor.x = e.offsetX;
-      cursor.y = e.offsetY;
+      position.x = e.offsetX;
+      position.y = e.offsetY;
       emitDraw(e.offsetX, e.offsetY);
     };
 
     const onMouseMove = (e) => {
-      if (!isDrawing) {
-        return;
+      emitCursor(e.offsetX, e.offsetY);
+
+      position.x = e.offsetX;
+      position.y = e.offsetY;
+
+      if (isDrawing) {
+        emitDraw(e.offsetX, e.offsetY);
       }
-      emitDraw(e.offsetX, e.offsetY);
-      cursor.x = e.offsetX;
-      cursor.y = e.offsetY;
     };
 
     const onMouseUp = (e) => {
@@ -103,26 +118,53 @@ export default function Canvas({ drawerId }) {
       emitDraw(e.offsetX, e.offsetY);
     };
 
-    canvas.addEventListener("mousedown", onMouseDown);
-    canvas.addEventListener("mouseup", onMouseUp);
-    canvas.addEventListener("mouseout", onMouseUp);
-    canvas.addEventListener("mousemove", throttle(onMouseMove, 10));
+    cursor.addEventListener("mousedown", onMouseDown);
+    cursor.addEventListener("mouseup", onMouseUp);
+    cursor.addEventListener("mouseout", onMouseUp);
+    cursor.addEventListener("mousemove", throttle(onMouseMove, 10));
 
     const onDrawEvent = (message) => {
       // Conditional check so logs aren't slammed too hard
-      if (message.type !== "DRAW") {
+      if (message.type !== "DRAW" && message.type !== "CURSOR") {
         console.log("draw", message);
       }
 
       switch (message.type) {
-        case "DRAW":
-          const { x0, y0, x1, y1, color } = message.data;
-          drawLine(x0, y0, x1, y1, color);
+        case "DRAW": {
+          const { x0, y0, x1, y1, color: drawColor } = message.data;
+          displayCtx.beginPath();
+          displayCtx.moveTo(x0, y0);
+          displayCtx.lineTo(x1, y1);
+          displayCtx.strokeStyle = drawColor;
+          displayCtx.lineWidth =
+            color === "white" ? eraserSizeRef.current : brushSizeRef.current;
+          displayCtx.stroke();
+          displayCtx.closePath();
           break;
+        }
 
-        case "CLEAR":
-          context.clearRect(0, 0, canvas.width, canvas.height);
+        case "CLEAR": {
+          displayCtx.clearRect(0, 0, display.width, display.height);
           break;
+        }
+
+        case "CURSOR": {
+          const { x, y, size, color: drawColor } = message.data;
+          cursorCtx.clearRect(0, 0, cursor.width, cursor.height);
+          cursorCtx.beginPath();
+          cursorCtx.arc(x, y, size, 0, 2 * Math.PI);
+
+          if (drawColor === "white") {
+            cursorCtx.strokeStyle = "black";
+            cursorCtx.lineWidth = 1;
+            cursorCtx.stroke();
+          } else {
+            cursorCtx.fillStyle = drawColor;
+            cursorCtx.fill();
+          }
+          cursorCtx.closePath();
+          break;
+        }
 
         default:
           console.log("Unknown draw", message);
@@ -138,8 +180,7 @@ export default function Canvas({ drawerId }) {
 
   return (
     <div className="skr-draw">
-      <canvas className="canvas" ref={canvasRef} width="666" height="666" />
-
+      <canvas className="display" ref={displayRef} width="666" height="666" />
       <canvas className="cursor" ref={cursorRef} width="666" height="666" />
 
       <div>
