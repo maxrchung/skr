@@ -1,15 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import App from "./App";
 import { socket } from "./socket";
 
 export default function SocketStuff() {
+  const [connected, setConnected] = useState(false);
+
   useEffect(() => {
     function onConnect() {
-      console.log("Connected");
+      setConnected(true);
     }
 
     function onDisconnect() {
-      console.log("Disconnected");
+      setConnected(false);
     }
 
     function onMessage(message) {
@@ -27,5 +29,17 @@ export default function SocketStuff() {
     };
   }, []);
 
-  return <App />;
+  return (
+    <>
+      <div>You are currently: {connected ? "Connected" : "Disconnected"}</div>
+      <button
+        onClick={() => {
+          socket.emit("message", "hi");
+        }}
+      >
+        hi
+      </button>
+      <App />
+    </>
+  );
 }

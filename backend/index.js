@@ -10,4 +10,12 @@ const io = new Server(4000, {
 
 io.on("connection", (socket) => {
   console.log("a user connected");
+
+  socket.on("disconnect", () => {
+    delete sockets[socket];
+  });
+
+  socket.on("message", (message) => {
+    console.log(`Received: ${message}`);
+  });
 });
