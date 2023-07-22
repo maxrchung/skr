@@ -4,6 +4,9 @@ import { socket } from "./socket";
 
 export default function SocketStuff() {
   const [connected, setConnected] = useState(false);
+  const [phase, setPhase] = useState("NAME_PHASE");
+  const [lobbies, setLobbies] = useState([]);
+  const [username, setUsername] = useState(false);
 
   useEffect(() => {
     function onConnect() {
@@ -16,16 +19,23 @@ export default function SocketStuff() {
 
     function onMessage(message) {
       console.log("Message", message);
+
+      switch (message.type) {
+        case "SET_NAME":
+          setUsername(message.value);
+          setPhase("OUT_LOBBY");
+          break;
+      }
     }
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
-    socket.on("foo", onMessage);
+    socket.on("message", onMessage);
 
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
-      socket.off("foo", onMessage);
+      socket.off("message", onMessage);
     };
   }, []);
 
@@ -39,7 +49,7 @@ export default function SocketStuff() {
       >
         hi
       </button>
-      <App />
+      <App username={username} phase={phase} lobbies={lobbies} />
     </>
   );
 }

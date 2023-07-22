@@ -1,25 +1,20 @@
 import logo from "./logo.svg";
 import "./App.css";
 import { useState } from "react";
+import { socket } from "./socket";
 
-function App() {
-  const [name, setName] = useState("");
-  const [phase, setPhase] = useState("NAME_PHASE");
-  const [lobbies, setLobbies] = useState([]);
-
+function App({ username, lobbies, phase }) {
   if (phase === "NAME_PHASE") {
     // render something
     return (
       <div className="skr-name">
         <p>hey you need to enter a name broski</p>
-        <NameInput name={name} setName={setName} setPhase={setPhase} />
+        <NameInput />
       </div>
     );
   } else if (phase === "OUT_LOBBY") {
     // render something else
-    return (
-      <Lobbies name={name} lobbies={lobbies} setLobbies={setLobbies}></Lobbies>
-    );
+    return <Lobbies name={username} lobbies={lobbies}></Lobbies>;
   } else if (phase === "IN_LOBBY") {
     // render something else
   } else if (phase === "GAME") {
@@ -27,7 +22,7 @@ function App() {
   }
 }
 
-function NameInput(props) {
+function NameInput() {
   const [value, setValue] = useState(undefined);
 
   return (
@@ -40,8 +35,7 @@ function NameInput(props) {
       />
       <button
         onClick={(e) => {
-          props.setName(value);
-          props.setPhase("OUT_LOBBY");
+          socket.emit("message", { type: "SET_NAME", value });
         }}
       >
         Ok
@@ -86,12 +80,12 @@ function Lobbies(props) {
       ></input>
       <button
         onClick={(e) => {
-          props.setLobbies(
-            props.lobbies.concat({
-              lobbyname: newLobbyName,
-              password: newLobbyPassword,
-            })
-          );
+          //   props.setLobbies(
+          //     props.lobbies.concat({
+          //       lobbyname: newLobbyName,
+          //       password: newLobbyPassword,
+          //     })
+          //   );
         }}
       >
         Create Lobby!
