@@ -9,10 +9,10 @@ const io = new Server(4000, {
 });
 
 io.on("connection", (socket) => {
-  console.log("a user connected");
+  console.log("Connected: " + socket.id);
 
   socket.on("disconnect", () => {
-    //delete sockets[socket];
+    console.log("Disconnected: " + socket.id);
   });
 
   socket.on("message", (message) => {
@@ -32,7 +32,20 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("draw", (data) => {
-    io.emit("draw", data);
+  socket.on("draw", (message) => {
+    console.log(`Draw message: ${message}`);
+
+    switch (message.type) {
+      case "DRAW":
+        io.emit("draw", message);
+        break;
+
+      case "CLEAR":
+        io.emit("draw", message);
+        break;
+
+      default:
+        console.log("Unknown message: " + message);
+    }
   });
 });

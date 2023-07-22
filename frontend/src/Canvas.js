@@ -17,11 +17,14 @@ const throttle = (callback, delay) => {
 
 export default function Canvas() {
   const canvasRef = useRef(null);
+  const clearRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     let isDrawing = false;
+
+    const clear = clearRef.current;
 
     const cursor = {
       color: "black",
@@ -37,8 +40,11 @@ export default function Canvas() {
       context.closePath();
     };
 
-    const emit = (x0, y0, x1, y1, color) =>
-      socket.emit("draw", { x0, y0, x1, y1, color });
+    const emitDraw = (x0, y0, x1, y1, color) =>
+      socket.emit("draw", {
+        type: "DRAW",
+        data: { x0, y0, x1, y1, color },
+      });
 
     const onMouseDown = (e) => {
       isDrawing = true;
@@ -50,7 +56,7 @@ export default function Canvas() {
       if (!isDrawing) {
         return;
       }
-      emit(cursor.x, cursor.y, e.offsetX, e.offsetY, cursor.color);
+      emitDraw(cursor.x, cursor.y, e.offsetX, e.offsetY, cursor.color);
       cursor.x = e.offsetX;
       cursor.y = e.offsetY;
     };
@@ -60,16 +66,36 @@ export default function Canvas() {
         return;
       }
       isDrawing = false;
-      emit(cursor.x, cursor.y, e.offsetX, e.offsetY, cursor.color);
+      emitDraw(cursor.x, cursor.y, e.offsetX, e.offsetY, cursor.color);
     };
 
-    canvas.addEventListener("mousedown", onMouseDown, false);
-    canvas.addEventListener("mouseup", onMouseUp, false);
-    canvas.addEventListener("mouseout", onMouseUp, false);
-    canvas.addEventListener("mousemove", throttle(onMouseMove, 10), false);
+    canvas.addEventListener("mousedown", onMouseDown);
+    canvas.addEventListener("mouseup", onMouseUp);
+    canvas.addEventListener("mouseout", onMouseUp);
+    canvas.addEventListener("mousemove", throttle(onMouseMove, 10));
 
-    const onDrawEvent = ({ x0, y0, x1, y1, color }) =>
-      drawLine(x0, y0, x1, y1, color);
+    clear.addEventListener("click", () =>
+      socket.emit("draw", { type: "CLEAR" })
+    );
+
+    const onDrawEvent = (message) => {
+      console.log(`Draw message: ${message}`);
+
+      switch (message.type) {
+        case "DRAW":
+          const { x0, y0, x1, y1, color } = message.data;
+          drawLine(x0, y0, x1, y1, color);
+          break;
+
+        case "CLEAR":
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          break;
+
+        default:
+          console.log(`Unknown message: ${message}`);
+          break;
+      }
+    };
 
     socket.on("draw", onDrawEvent);
     return () => {
@@ -78,6 +104,12 @@ export default function Canvas() {
   }, []);
 
   return (
-    <canvas ref={canvasRef} width="666" height="666" className="skr-canvas" />
+    <div className="skr-draw">
+      <canvas className="canvas" ref={canvasRef} width="666" height="666" />
+      <div className="tools">
+        <button>eraser</button>
+        <button ref={clearRef}>clear whole canvas!!!!!!!!!!!!!!!</button>
+      </div>
+    </div>
   );
 }
