@@ -7,7 +7,9 @@ export default function SocketStuff() {
   const [connected, setConnected] = useState(false);
   const [phase, setPhase] = useState("NAME_PHASE");
   const [lobbies, setLobbies] = useState([]);
-  const [username, setUsername] = useState(false);
+  const [username, setUsername] = useState("");
+  const [lobbyName, setLobbyName] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     function onConnect() {
@@ -26,7 +28,18 @@ export default function SocketStuff() {
           setUsername(message.value);
           setPhase("OUT_LOBBY");
           break;
-
+        case "SEE_LOBBY":
+          setLobbies(message.lobbies);
+          break;
+        case "NEW_LOBBY":
+          setUsername(message.username);
+          setPassword(message.password);
+          setLobbyName(message.lobbyName);
+          setLobbies(message.lobbies);
+          console.log("msgreggin", message.lobbies);
+          console.log("reggin", lobbies);
+          setPhase("IN_LOBBY");
+          break;
         default:
           console.log("Unknown message", message);
           break;

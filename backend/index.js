@@ -8,6 +8,10 @@ const io = new Server(4000, {
   },
 });
 
+const lobbies = {};
+
+let lobbyId = 0;
+
 io.on("connection", (socket) => {
   console.log("Connected: " + socket.id);
 
@@ -24,6 +28,24 @@ io.on("connection", (socket) => {
         socket.emit("message", {
           type: "SET_NAME",
           value: socket.data.username,
+        });
+        break;
+      case "SEE_LOBBY":
+        socket.emit("message", {
+          type: "SEE_LOBBY",
+          lobbies: Object.values(lobbies),
+        });
+      case "NEW_LOBBY":
+        lobbies[lobbyId] = {
+          players: [socket.id],
+          lobbyName: message.lobbyName,
+          password: message.password,
+        };
+        socket.emit("message", {
+          type: "NEW_LOBBY",
+          lobbyName: message.lobbyName,
+          password: message.password,
+          lobbies: Object.values(lobbies),
         });
         break;
 

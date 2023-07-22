@@ -17,6 +17,7 @@ function App({ username, lobbies, phase }) {
     return <Lobbies name={username} lobbies={lobbies}></Lobbies>;
   } else if (phase === "IN_LOBBY") {
     // render something else
+    return <LobbyView></LobbyView>;
   } else if (phase === "GAME") {
     // render something else
   }
@@ -49,12 +50,13 @@ function Lobbies(props) {
   const [newLobbyPassword, setNewLobbyPassword] = useState("");
 
   console.log("props", props);
+  console.log("lobbies", props.lobbies);
   return (
     <>
       <div>You're Username: {props.name}</div>
       {props.lobbies.map((lobby) => (
-        <div key={lobby.lobbyname}>
-          Lobby {lobby.lobbyname}{" "}
+        <div key={lobby.lobbyName}>
+          Lobby {lobby.lobbyName}{" "}
           <button onClick={(e) => {}}>Join Lobby</button>
           {lobby.password && (
             <>
@@ -80,16 +82,38 @@ function Lobbies(props) {
       ></input>
       <button
         onClick={(e) => {
-          //   props.setLobbies(
-          //     props.lobbies.concat({
-          //       lobbyname: newLobbyName,
-          //       password: newLobbyPassword,
-          //     })
-          //   );
+          socket.emit("message", {
+            type: "NEW_LOBBY",
+            lobbyName: newLobbyName,
+            password: newLobbyPassword,
+          });
+          // props.setLobbies(
+          //   props.lobbies.concat({
+          //     lobbyname: newLobbyName,
+          //     password: newLobbyPassword,
+          //   })
+          // );
         }}
       >
         Create Lobby!
       </button>
+      <div>
+        <button
+          onClick={(e) => {
+            socket.emit("message", { type: "SEE_LOBBY" });
+          }}
+        >
+          See Lobbies
+        </button>
+      </div>
+    </>
+  );
+}
+
+function LobbyView() {
+  return (
+    <>
+      <label>727Reggin</label>
     </>
   );
 }
