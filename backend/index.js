@@ -35,6 +35,7 @@ io.on("connection", (socket) => {
           type: "SEE_LOBBY",
           lobbies: Object.values(lobbies),
         });
+        break;
       case "NEW_LOBBY":
         lobbies[lobbyId] = {
           players: [socket.id],

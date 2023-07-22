@@ -30,6 +30,7 @@ export default function SocketStuff() {
           break;
         case "SEE_LOBBY":
           setLobbies(message.lobbies);
+          console.log("727", message.lobbies);
           break;
         case "NEW_LOBBY":
           setUsername(message.username);
