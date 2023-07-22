@@ -56,7 +56,7 @@ io.on("connection", (socket) => {
 
   socket.on("draw", (message) => {
     // Conditional check so logs aren't slammed too hard
-    if (message.type !== "DRAW") {
+    if (message.type !== "DRAW" && message.type !== "CURSOR") {
       console.log("draw", message);
     }
 
@@ -66,6 +66,10 @@ io.on("connection", (socket) => {
         break;
 
       case "CLEAR":
+        io.emit("draw", message);
+        break;
+
+      case "CURSOR":
         io.emit("draw", message);
         break;
 

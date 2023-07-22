@@ -4,13 +4,17 @@
 }
 
 .skr-draw {
-  .canvas {
+  position: relative;
+
+  .display {
     border: 1px solid black;
   }
 
-  .tools {
-    display: flex;
-    gap: 8px;
+  .cursor {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border: 1px solid black;
   }
 }
 
