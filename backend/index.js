@@ -16,7 +16,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("message", (message) => {
-    console.log(`Received: ${message}`);
+    console.log(`Received: ${JSON.stringify(message)}`);
+
     switch (message.type) {
       case "SET_NAME":
         socket.data.username = message.value;
@@ -25,6 +26,13 @@ io.on("connection", (socket) => {
           value: socket.data.username,
         });
         break;
+
+      default:
+        console.log("Unknown message");
     }
+  });
+
+  socket.on("draw", (data) => {
+    io.emit("draw", data);
   });
 });

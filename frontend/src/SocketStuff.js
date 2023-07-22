@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import App from "./App";
 import { socket } from "./socket";
+import Canvas from "./Canvas";
 
 export default function SocketStuff() {
   const [connected, setConnected] = useState(false);
@@ -24,6 +25,10 @@ export default function SocketStuff() {
         case "SET_NAME":
           setUsername(message.value);
           setPhase("OUT_LOBBY");
+          break;
+
+        default:
+          console.log("Unknown message");
           break;
       }
     }
@@ -50,6 +55,7 @@ export default function SocketStuff() {
         hi
       </button>
       <App username={username} phase={phase} lobbies={lobbies} />
+      <Canvas />
     </>
   );
 }
