@@ -19,7 +19,7 @@ export default function SocketStuff() {
     }
 
     function onMessage(message) {
-      console.log("Message", message);
+      console.log("message", message);
 
       switch (message.type) {
         case "SET_NAME":
@@ -28,7 +28,7 @@ export default function SocketStuff() {
           break;
 
         default:
-          console.log("Unknown message");
+          console.log("Unknown message", message);
           break;
       }
     }

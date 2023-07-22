@@ -79,7 +79,7 @@ export default function Canvas() {
     );
 
     const onDrawEvent = (message) => {
-      console.log(`Draw message: ${message}`);
+      console.log("draw", message);
 
       switch (message.type) {
         case "DRAW":
@@ -92,7 +92,7 @@ export default function Canvas() {
           break;
 
         default:
-          console.log(`Unknown message: ${message}`);
+          console.log("Unknown draw", message);
           break;
       }
     };

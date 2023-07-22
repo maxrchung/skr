@@ -16,7 +16,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("message", (message) => {
-    console.log(`Received: ${JSON.stringify(message)}`);
+    console.log("message", message);
 
     switch (message.type) {
       case "SET_NAME":
@@ -28,12 +28,15 @@ io.on("connection", (socket) => {
         break;
 
       default:
-        console.log("Unknown message");
+        console.log("Unknown message", message);
     }
   });
 
   socket.on("draw", (message) => {
-    console.log(`Draw message: ${message}`);
+    // Conditional check so logs aren't slammed too hard
+    if (message.type !== "DRAW") {
+      console.log("draw", message);
+    }
 
     switch (message.type) {
       case "DRAW":
@@ -45,7 +48,7 @@ io.on("connection", (socket) => {
         break;
 
       default:
-        console.log("Unknown message: " + message);
+        console.log("Unknown draw", message);
     }
   });
 });
