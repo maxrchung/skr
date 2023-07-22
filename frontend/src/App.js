@@ -31,7 +31,7 @@ function App() {
 
   if (!name) {
     return (
-      <div>
+      <div className="skr-name">
         <p>hey you need to enter a name broski</p>
         <Input name={name} setName={setName} />
       </div>
