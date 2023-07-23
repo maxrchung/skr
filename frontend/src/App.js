@@ -36,7 +36,6 @@ function App({
     );
   } else if (phase === "GAME") {
     // render something else
-    console.log(phase);
     return (
       <GamePhase
         options={options}
