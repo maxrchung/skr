@@ -1,6 +1,6 @@
-import { socket } from "./socket";
+import { socket } from "../socket";
 
-export default function GamePhase({ gameStep, drawerId, options }) {
+export default function ChooseStep({ drawerId, options }) {
   if (drawerId === socket.id) {
     return (
       <>
@@ -11,7 +11,7 @@ export default function GamePhase({ gameStep, drawerId, options }) {
             onClick={() => {
               socket.emit("message", {
                 type: "CHOOSE_WORD",
-                value: option,
+                option,
               });
             }}
           >

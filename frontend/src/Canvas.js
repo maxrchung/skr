@@ -154,17 +154,16 @@ export default function Canvas({ drawerId }) {
           const { x, y, size, color: drawColor } = message.data;
           cursorCtx.clearRect(0, 0, cursor.width, cursor.height);
           cursorCtx.beginPath();
-          cursorCtx.arc(x, y, size, 0, 2 * Math.PI);
+          cursorCtx.arc(x, y, size / 2, 0, 2 * Math.PI);
+
+          cursorCtx.fillStyle = drawColor;
+          cursorCtx.fill();
 
           if (drawColor === "white") {
             cursorCtx.strokeStyle = "black";
             cursorCtx.lineWidth = 1;
             cursorCtx.stroke();
-          } else {
-            cursorCtx.fillStyle = drawColor;
-            cursorCtx.fill();
           }
-          cursorCtx.closePath();
           break;
         }
 

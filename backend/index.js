@@ -13,6 +13,8 @@ const lobbies = {};
 
 let lobbyId = 0;
 
+let gameWord = "";
+
 io.on("connection", (socket) => {
   console.log("Connected: " + socket.id);
 
@@ -72,7 +74,9 @@ io.on("connection", (socket) => {
         break;
       }
 
-      case "CHOOSE_WORDS":
+      case "CHOOSE_WORD":
+        gameWord = message.option;
+        io.emit("message", { type: "CHOOSE_WORD", option: gameWord });
         break;
 
       default:

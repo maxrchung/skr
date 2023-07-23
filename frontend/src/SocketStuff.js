@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import App from "./App";
 import { socket } from "./socket";
-import Canvas from "./Canvas";
-import GamePhase from "./GamePhase";
+import GamePhase from "./Game/GamePhase";
 
 export default function SocketStuff() {
   const [connected, setConnected] = useState(false);
@@ -14,6 +13,9 @@ export default function SocketStuff() {
 
   const [drawerId, setDrawerId] = useState();
   const [options, setOptions] = useState([]);
+
+  const [gameStep, setGameStep] = useState("CHOOSE");
+  const [gameWord, setGameWord] = useState("");
 
   useEffect(() => {
     function onConnect() {
@@ -54,6 +56,11 @@ export default function SocketStuff() {
           setDrawerId(message.drawerId);
           break;
 
+        case "CHOOSE_WORD":
+          setGameStep("PLAY");
+          setGameWord(message.option);
+          break;
+
         default:
           console.log("Unknown message", message);
           break;
@@ -83,9 +90,6 @@ export default function SocketStuff() {
       </button>
       <App username={username} phase={phase} lobbies={lobbies} />
 
-      <h2>Canvas stuff:</h2>
-      <Canvas drawerId={drawerId} />
-
       <h2>Game stuff:</h2>
       <button
         onClick={() => {
@@ -102,7 +106,12 @@ export default function SocketStuff() {
       >
         Get words
       </button>
-      <GamePhase options={options} drawerId={drawerId} />
+      <GamePhase
+        options={options}
+        drawerId={drawerId}
+        gameWord={gameWord}
+        gameStep={gameStep}
+      />
     </>
   );
 }
