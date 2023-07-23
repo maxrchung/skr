@@ -50,6 +50,9 @@ io.on("connection", (socket) => {
         });
         break;
 
+      case "CHOOSE_WORD":
+        break;
+
       default:
         console.log("Unknown message", message);
     }

@@ -137,7 +137,9 @@ export default function Canvas({ drawerId }) {
           displayCtx.lineTo(x1, y1);
           displayCtx.strokeStyle = drawColor;
           displayCtx.lineWidth =
-            color === "white" ? eraserSizeRef.current : brushSizeRef.current;
+            drawColor === "white"
+              ? eraserSizeRef.current
+              : brushSizeRef.current;
           displayCtx.stroke();
           displayCtx.closePath();
           break;
