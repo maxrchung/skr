@@ -18,6 +18,8 @@ export default function SocketStuff() {
 
   const [gameStep, setGameStep] = useState("CHOOSE");
   const [gameWord, setGameWord] = useState("");
+  const [isCorrect, setIsCorrect] = useState(false);
+  const [endTime, setEndTime] = useState(0);
 
   useEffect(() => {
     function onConnect() {
@@ -59,6 +61,19 @@ export default function SocketStuff() {
         case "CHOOSE_WORD":
           setGameStep("PLAY");
           setGameWord(message.option);
+          setEndTime(message.endTime);
+          break;
+
+        case "GOT_ANSWER":
+          setIsCorrect(true);
+          break;
+
+        case "RESET_ROUND":
+          setIsCorrect(false);
+          setDrawerId(message.drawerId);
+          setOptions(message.options);
+          setGameWord("");
+          setGameStep("CHOOSE");
           break;
 
         default:
@@ -116,6 +131,8 @@ export default function SocketStuff() {
         drawerId={drawerId}
         gameStep={gameStep}
         gameWord={gameWord}
+        isCorrect={isCorrect}
+        endTime={endTime}
       />
     </>
   );

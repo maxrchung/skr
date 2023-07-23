@@ -1,22 +1,53 @@
+import { useState } from "react";
 import Canvas from "../Canvas";
 import { socket } from "../socket";
 
-export default function PlayStep({ drawerId, gameWord }) {
+export default function PlayStep({ drawerId, gameWord, isCorrect }) {
+  const [value, setValue] = useState("");
+  const [error, setError] = useState(false);
+
   if (drawerId === socket.id) {
     return (
       <>
-        <p>Yo this is your word you need to draw: {gameWord}</p>
-        <Canvas drawerId={drawerId} />
-      </>
-    );
-  } else {
-    return (
-      <>
-        <p>Guess the word...</p>
-        <input></input>
-        <button>Submit</button>
+        <p>
+          Yo this is your word you need to draw: <strong>{gameWord}</strong>
+        </p>
         <Canvas drawerId={drawerId} />
       </>
     );
   }
+
+  return (
+    <>
+      {isCorrect ? (
+        <h4>Nice. You got the answer. Good job.</h4>
+      ) : (
+        <>
+          <p>Guess the word...</p>
+          <input
+            value={value}
+            onChange={(event) => setValue(event.target.value)}
+          />
+          <button
+            onClick={() => {
+              setValue("");
+
+              if (value !== gameWord) {
+                setError(true);
+              } else {
+                socket.emit("message", {
+                  type: "GOT_ANSWER",
+                });
+              }
+            }}
+          >
+            Submit
+          </button>
+          {error && <h1>Wrong answer, try again</h1>}
+        </>
+      )}
+
+      <Canvas drawerId={drawerId} />
+    </>
+  );
 }

@@ -13,8 +13,6 @@ const lobbies = {};
 
 let lobbyId = 0;
 
-let gameWord = "";
-
 io.on("connection", (socket) => {
   console.log("Connected: " + socket.id);
 
@@ -82,8 +80,42 @@ io.on("connection", (socket) => {
       }
 
       case "CHOOSE_WORD":
-        gameWord = message.option;
-        io.emit("message", { type: "CHOOSE_WORD", option: gameWord });
+        io.emit("message", {
+          type: "CHOOSE_WORD",
+          option: message.option,
+          endTime: new Date().getTime() + 1000 * 60,
+        });
+
+        setTimeout(async () => {
+          const options = [];
+          for (let i = 0; i < 3; ++i) {
+            options.push(words[Math.floor(Math.random() * words.length)]);
+          }
+
+          // TODO: Get sockets in room
+          const sockets = await io.fetchSockets();
+          const ids = sockets.map((socket) => socket.id);
+          const index = ids.findIndex((id) => id === message.drawerId);
+
+          let nextIndex;
+          if (index === -1 || ids.length - 1) {
+            nextIndex = 0;
+          } else {
+            nextIndex = (index + 1) % ids.length;
+          }
+          const nextDrawer = ids[nextIndex];
+
+          io.emit("message", {
+            type: "RESET_ROUND",
+            drawerId: nextDrawer,
+            options,
+          });
+        }, 1000 * 60);
+        break;
+
+      case "GOT_ANSWER":
+        // TODO: Update scores or something
+        io.emit("message", { type: "GOT_ANSWER" });
         break;
 
       default:

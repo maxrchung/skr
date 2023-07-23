@@ -15,6 +15,8 @@ function App({
   drawerId,
   gameWord,
   gameStep,
+  isCorrect,
+  endTime,
 }) {
   if (phase === "NAME_PHASE") {
     // render something
@@ -45,13 +47,15 @@ function App({
         drawerId={drawerId}
         gameWord={gameWord}
         gameStep={gameStep}
+        isCorrect={isCorrect}
+        endTime={endTime}
       />
     );
   }
 }
 
 function NameInput() {
-  const [value, setValue] = useState(undefined);
+  const [value, setValue] = useState("");
 
   return (
     <>

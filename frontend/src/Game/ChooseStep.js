@@ -12,6 +12,7 @@ export default function ChooseStep({ drawerId, options }) {
               socket.emit("message", {
                 type: "CHOOSE_WORD",
                 option,
+                drawerId,
               });
             }}
           >
