@@ -3,7 +3,7 @@ import "./App.css";
 import { useState } from "react";
 import { socket } from "./socket";
 
-function App({ username, lobbies, phase }) {
+function App({ username, lobbies, phase, lobbyName, password, playerList }) {
   if (phase === "NAME_PHASE") {
     // render something
     return (
@@ -17,7 +17,13 @@ function App({ username, lobbies, phase }) {
     return <Lobbies name={username} lobbies={lobbies}></Lobbies>;
   } else if (phase === "IN_LOBBY") {
     // render something else
-    return <LobbyView></LobbyView>;
+    return (
+      <LobbyView
+        lobbyName={lobbyName}
+        password={password}
+        playerList={playerList}
+      ></LobbyView>
+    );
   } else if (phase === "GAME") {
     // render something else
   }
@@ -48,20 +54,32 @@ function NameInput() {
 function Lobbies(props) {
   const [newLobbyName, setNewLobbyName] = useState("");
   const [newLobbyPassword, setNewLobbyPassword] = useState("");
+  const [joinPassword, setJoinPassword] = useState("");
 
   console.log("props", props);
-  console.log("lobbies", props.lobbies);
+
   return (
     <>
       <div>You're Username: {props.name}</div>
       {props.lobbies.map((lobby) => (
         <div key={lobby.lobbyName}>
           Lobby {lobby.lobbyName}{" "}
-          <button onClick={(e) => {}}>Join Lobby</button>
+          <button
+            onClick={(e) => {
+              setJoinPassword(joinPassword);
+              socket.emit("message", {
+                type: "JOIN_LOBBY",
+                lobbyName: lobby.lobbyName,
+                password: joinPassword,
+              });
+            }}
+          >
+            Join Lobby
+          </button>
           {lobby.password && (
             <>
               <label>Enter Password</label>
-              <input></input>
+              <input value={joinPassword}></input>
             </>
           )}
         </div>
@@ -87,12 +105,6 @@ function Lobbies(props) {
             lobbyName: newLobbyName,
             password: newLobbyPassword,
           });
-          // props.setLobbies(
-          //   props.lobbies.concat({
-          //     lobbyname: newLobbyName,
-          //     password: newLobbyPassword,
-          //   })
-          // );
         }}
       >
         Create Lobby!
@@ -110,11 +122,22 @@ function Lobbies(props) {
   );
 }
 
-function LobbyView() {
+function LobbyView({ lobbyName, password, playerList }) {
+  console.log(playerList);
+
   return (
-    <>
-      <label>727Reggin</label>
-    </>
+    <div>
+      <h4>Welcome to lobby {lobbyName}!</h4>
+      <label>Password: {password}</label>
+      <br />
+      <br />
+      <b>Player List</b>
+      {playerList.map((player) => (
+        <div key={player.id}>
+          <label>{player.name}</label>
+        </div>
+      ))}
+    </div>
   );
 }
 
