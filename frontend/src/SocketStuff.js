@@ -8,8 +8,10 @@ export default function SocketStuff() {
   const [phase, setPhase] = useState("NAME_PHASE");
   const [lobbies, setLobbies] = useState([]);
   const [username, setUsername] = useState("");
+
   const [lobbyName, setLobbyName] = useState("");
   const [password, setPassword] = useState("");
+  const [playerList, setPlayerList] = useState([]);
 
   const [drawerId, setDrawerId] = useState();
   const [options, setOptions] = useState([]);
@@ -36,15 +38,13 @@ export default function SocketStuff() {
           break;
         case "SEE_LOBBY":
           setLobbies(message.lobbies);
-          console.log("727", message.lobbies);
           break;
         case "NEW_LOBBY":
-          setUsername(message.username);
+          setPlayerList(message);
           setPassword(message.password);
           setLobbyName(message.lobbyName);
           setLobbies(message.lobbies);
-          console.log("msgreggin", message.lobbies);
-          console.log("reggin", lobbies);
+          setPlayerList(message.players);
           setPhase("IN_LOBBY");
           break;
 
@@ -109,6 +109,9 @@ export default function SocketStuff() {
         username={username}
         phase={phase}
         lobbies={lobbies}
+        lobbyName={lobbyName}
+        password={password}
+        playerList={playerList}
         options={options}
         drawerId={drawerId}
         gameStep={gameStep}
