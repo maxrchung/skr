@@ -69,6 +69,10 @@ io.on("connection", (socket) => {
             playerList: lobbies[lobbyId].players,
           });
         }
+        io.emit("message", {
+          type: "PLAYER_JOINED",
+          playerList: lobbies[lobbyId].players,
+        });
         break;
       }
 
