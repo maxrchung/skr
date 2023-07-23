@@ -37,8 +37,8 @@ io.on("connection", (socket) => {
         });
         break;
       case "NEW_LOBBY":
-        lobbies[lobbyId] = {
-          players: [socket.id],
+        lobbies[lobbyId++] = {
+          players: [{ id: socket.id, name: socket.data.username }],
           lobbyName: message.lobbyName,
           password: message.password,
         };
@@ -47,7 +47,14 @@ io.on("connection", (socket) => {
           lobbyName: message.lobbyName,
           password: message.password,
           lobbies: Object.values(lobbies),
+          players: lobbies[lobbyId].players,
         });
+        break;
+      case "JOIN_LOBBY":
+        let lobbyId = lobbies.filter((lobby) => {
+          lobby.lobbyName === message.lobbyName;
+        });
+
         break;
 
       default:
