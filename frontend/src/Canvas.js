@@ -68,6 +68,10 @@ export default function Canvas({ drawerId }) {
           x1,
           y1,
           color: colorRef.current,
+          size:
+            colorRef.current === "white"
+              ? eraserSizeRef.current
+              : brushSizeRef.current,
         },
       });
     };
@@ -131,15 +135,12 @@ export default function Canvas({ drawerId }) {
 
       switch (message.type) {
         case "DRAW": {
-          const { x0, y0, x1, y1, color: drawColor } = message.data;
+          const { x0, y0, x1, y1, color: drawColor, size } = message.data;
           displayCtx.beginPath();
           displayCtx.moveTo(x0, y0);
           displayCtx.lineTo(x1, y1);
           displayCtx.strokeStyle = drawColor;
-          displayCtx.lineWidth =
-            drawColor === "white"
-              ? eraserSizeRef.current
-              : brushSizeRef.current;
+          displayCtx.lineWidth = size;
           displayCtx.stroke();
           displayCtx.closePath();
           break;
