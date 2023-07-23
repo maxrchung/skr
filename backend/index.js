@@ -97,10 +97,9 @@ io.on("connection", (socket) => {
           options.push(words[Math.floor(Math.random() * words.length)]);
         }
 
-        // TODO: Get sockets in room
-        const sockets = await io.fetchSockets();
-        const ids = sockets.map((socket) => socket.id);
-        const nextDrawer = ids[Math.floor(Math.random() * ids.length)];
+        const sockets = await io.in(message.lobbyId).fetchSockets();
+        const nextDrawer =
+          sockets[Math.floor(Math.random() * sockets.length)].id;
 
         io.to(message.lobbyId).emit("message", {
           type: "START_GAME",
@@ -149,10 +148,10 @@ io.on("connection", (socket) => {
           );
 
           let nextIndex;
-          if (currIndex === -1 || currIndex === ids.length - 1) {
+          if (currIndex === -1 || currIndex === sockets.length - 1) {
             nextIndex = 0;
           } else {
-            nextIndex = (currIndex + 1) % ids.length;
+            nextIndex = (currIndex + 1) % sockets.length;
           }
           const nextDrawer = sockets[nextIndex].id;
 

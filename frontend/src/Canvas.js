@@ -185,29 +185,31 @@ export default function Canvas({ drawerId }) {
       <canvas className="display" ref={displayRef} width="666" height="666" />
       <canvas className="cursor" ref={cursorRef} width="666" height="666" />
 
-      <div>
-        <button onClick={() => setColor("black")}>brush</button>
-        <input
-          type="range"
-          min="1"
-          max="100"
-          onChange={(event) => setBrushSize(event.target.value)}
-          value={brushSize}
-        />
+      {drawerId === socket.id && (
+        <div>
+          <button onClick={() => setColor("black")}>brush</button>
+          <input
+            type="range"
+            min="1"
+            max="100"
+            onChange={(event) => setBrushSize(event.target.value)}
+            value={brushSize}
+          />
 
-        <button onClick={() => setColor("white")}>eraser</button>
-        <input
-          type="range"
-          min="1"
-          max="100"
-          onChange={(event) => setEraserSize(event.target.value)}
-          value={eraserSize}
-        />
+          <button onClick={() => setColor("white")}>eraser</button>
+          <input
+            type="range"
+            min="1"
+            max="100"
+            onChange={(event) => setEraserSize(event.target.value)}
+            value={eraserSize}
+          />
 
-        <button onClick={() => socket.emit("draw", { type: "CLEAR" })}>
-          clear whole canvas!!!
-        </button>
-      </div>
+          <button onClick={() => socket.emit("draw", { type: "CLEAR" })}>
+            clear whole canvas!!!
+          </button>
+        </div>
+      )}
     </div>
   );
 }
