@@ -530,7 +530,7 @@ const shows = [
   "sesame street",
   "thomas & friends",
   "mickey mouse clubhouse",
-  "barney & friends",
+  "barney and friends",
   "peppa pig",
   "curious george",
   "doc mcstuffins",

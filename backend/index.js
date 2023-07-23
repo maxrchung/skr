@@ -103,22 +103,21 @@ io.on("connection", (socket) => {
         break;
 
       case "JOIN_LOBBY": {
-        const lobbyId = message.lobbyId;
-        if (message.password === lobbies[lobbyId].password) {
-          socket.join(lobbyId);
+        if (message.password === lobbies[message.lobbyId].password) {
+          socket.join(message.lobbyId);
 
-          const playerList = (await io.in(lobbyId).fetchSockets()).map(
+          const playerList = (await io.in(message.lobbyId).fetchSockets()).map(
             (socket) => socket.data
           );
 
           socket.emit("message", {
             type: "JOIN_LOBBY",
             playerList,
-            lobbyName: lobbies[lobbyId].lobbyName,
-            lobbyId,
+            lobbyName: lobbies[message.lobbyId].lobbyName,
+            lobbyId: message.lobbyId,
           });
 
-          io.to(lobbyId).emit("message", {
+          io.to(message.lobbyId).emit("message", {
             type: "PLAYER_JOINED",
             playerList,
           });
@@ -171,19 +170,10 @@ io.on("connection", (socket) => {
 
         const timeoutId = setTimeout(async () => {
           const options = getOptions();
-
-          const sockets = await io.in(message.lobbyId).fetchSockets();
-          const currIndex = sockets.findIndex(
-            (socket) => socket.id === message.drawerId
+          const nextDrawerId = await getNextDrawerId(
+            message.lobbyId,
+            message.drawerId
           );
-
-          let nextIndex;
-          if (currIndex === -1 || currIndex === sockets.length - 1) {
-            nextIndex = 0;
-          } else {
-            nextIndex = (currIndex + 1) % sockets.length;
-          }
-          const nextDrawerId = sockets[nextIndex].id;
 
           (await io.in(message.lobbyId).fetchSockets()).forEach(
             (socket) => (socket.data.hasScored = false)
@@ -195,7 +185,7 @@ io.on("connection", (socket) => {
             io.to(message.lobbyId).emit("message", {
               type: "END_GAME",
               winnerId: socket.id,
-              playerList: (await io.in(lobbyId).fetchSockets()).map(
+              playerList: (await io.in(message.lobbyId).fetchSockets()).map(
                 (socket) => socket.data
               ),
             });
@@ -204,7 +194,7 @@ io.on("connection", (socket) => {
               type: "RESET_ROUND",
               drawerId: nextDrawerId,
               options,
-              playerList: (await io.in(lobbyId).fetchSockets()).map(
+              playerList: (await io.in(message.lobbyId).fetchSockets()).map(
                 (socket) => socket.data
               ),
             });
@@ -228,9 +218,9 @@ io.on("connection", (socket) => {
         const notScored = sockets.filter((socket) => !socket.data.hasScored);
 
         // === 1 to ignore drawer
-        if (notScored === 1) {
+        if (notScored.length === 1) {
           const options = getOptions();
-          const nextDrawerId = getNextDrawerId(
+          const nextDrawerId = await getNextDrawerId(
             message.lobbyId,
             message.drawerId
           );
@@ -238,16 +228,16 @@ io.on("connection", (socket) => {
           const sockets = await io.in(message.lobbyId).fetchSockets();
           sockets.forEach((socket) => (socket.data.hasScored = false));
 
+          // Make sure we don't trigger timeout later
+          clearTimeout(lobbies[message.lobbyId].timeoutId);
+
           if (socket.data.score === 5) {
             sockets.forEach((socket) => (socket.data.score = 0));
-
-            // Make sure we don't trigger timeout later
-            clearTimeout(lobbies[message.lobbyId].timeoutId);
 
             io.to(message.lobbyId).emit("message", {
               type: "END_GAME",
               winnerId: socket.id,
-              playerList: (await io.in(lobbyId).fetchSockets()).map(
+              playerList: (await io.in(message.lobbyId).fetchSockets()).map(
                 (socket) => socket.data
               ),
             });
@@ -256,7 +246,7 @@ io.on("connection", (socket) => {
               type: "RESET_ROUND",
               drawerId: nextDrawerId,
               options,
-              playerList: (await io.in(lobbyId).fetchSockets()).map(
+              playerList: (await io.in(message.lobbyId).fetchSockets()).map(
                 (socket) => socket.data
               ),
             });
@@ -265,7 +255,7 @@ io.on("connection", (socket) => {
           io.to(message.lobbyId).emit("message", {
             type: "GOT_ANSWER",
             answerId: socket.id,
-            playerList: (await io.in(lobbyId).fetchSockets()).map(
+            playerList: (await io.in(message.lobbyId).fetchSockets()).map(
               (socket) => socket.data
             ),
           });
