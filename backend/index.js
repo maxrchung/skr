@@ -38,7 +38,7 @@ io.on("connection", (socket) => {
         });
         break;
       case "NEW_LOBBY":
-        lobbies[lobbyId++] = {
+        lobbies[lobbyId] = {
           players: [{ id: socket.id, name: socket.data.username }],
           lobbyName: message.lobbyName,
           password: message.password,
@@ -50,13 +50,27 @@ io.on("connection", (socket) => {
           lobbies: Object.values(lobbies),
           players: lobbies[lobbyId].players,
         });
+        lobbyId++;
         break;
-      case "JOIN_LOBBY":
-        let lobbyId = lobbies.filter((lobby) => {
-          lobby.lobbyName === message.lobbyName;
+      case "JOIN_LOBBY": {
+        let lobbyId;
+        Object.keys(lobbies).forEach((i) => {
+          if (lobbies[i].lobbyName === message.lobbyName) {
+            lobbyId = i;
+          }
         });
-
+        if (message.password === lobbies[lobbyId].password) {
+          lobbies[lobbyId].players.push({
+            id: socket.id,
+            name: socket.data.username,
+          });
+          socket.emit("message", {
+            type: "JOIN_LOBBY",
+            playerList: lobbies[lobbyId].players,
+          });
+        }
         break;
+      }
 
       case "GET_WORDS": {
         const options = [];

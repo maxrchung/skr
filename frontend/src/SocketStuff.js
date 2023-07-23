@@ -50,6 +50,11 @@ export default function SocketStuff() {
           setPhase("IN_LOBBY");
           break;
 
+        case "JOIN_LOBBY":
+          setPlayerList(message.playerList);
+          setPhase("IN_LOBBY");
+          break;
+
         case "GET_WORDS":
           setOptions(message.options);
           break;
