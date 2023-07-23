@@ -14,6 +14,7 @@ export default function PlayStep({ drawerId, gameWord }) {
       <>
         <p>Guess the word...</p>
         <input></input>
+        <button>Submit</button>
         <Canvas drawerId={drawerId} />
       </>
     );
