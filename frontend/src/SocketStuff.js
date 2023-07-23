@@ -8,6 +8,7 @@ export default function SocketStuff() {
   const [lobbies, setLobbies] = useState([]);
   const [username, setUsername] = useState("");
 
+  const [lobbyId, setLobbyId] = useState("");
   const [lobbyName, setLobbyName] = useState("");
   const [password, setPassword] = useState("");
   const [playerList, setPlayerList] = useState([]);
@@ -45,6 +46,7 @@ export default function SocketStuff() {
         case "NEW_LOBBY":
           setPassword(message.password);
           setLobbyName(message.lobbyName);
+          setLobbyId(message.lobbyId);
           setLobbies(message.lobbies);
           setPlayerList(message.players);
           setPhase("IN_LOBBY");
@@ -52,6 +54,7 @@ export default function SocketStuff() {
 
         case "JOIN_LOBBY":
           setPlayerList(message.playerList);
+          setLobbyId(message.lobbyId);
           setLobbyName(message.lobbyName);
           setPhase("IN_LOBBY");
           break;
@@ -163,6 +166,7 @@ export default function SocketStuff() {
         isCorrect={isCorrect}
         endTime={endTime}
         winner={winner}
+        lobbyId={lobbyId}
       />
     </>
   );

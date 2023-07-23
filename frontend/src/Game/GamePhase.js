@@ -10,6 +10,7 @@ export default function GamePhase({
   isCorrect,
   endTime,
   playerList,
+  lobbyId,
 }) {
   const [remaining, setRemaining] = useState(0);
 
@@ -35,6 +36,7 @@ export default function GamePhase({
           drawerId={drawerId}
           options={options}
           playerList={playerList}
+          lobbyId={lobbyId}
         />
       ) : (
         <>
@@ -45,6 +47,7 @@ export default function GamePhase({
             drawerId={drawerId}
             gameWord={gameWord}
             isCorrect={isCorrect}
+            lobbyId={lobbyId}
           />
         </>
       )}

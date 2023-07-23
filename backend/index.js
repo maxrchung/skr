@@ -9,8 +9,21 @@ const io = new Server(4000, {
   },
 });
 
-const lobbies = {}; /* { lobby_id : { players : [{ id, name}] },
-						lobbyName, password}*/
+/* 
+{
+  lobbyId : {
+    players : [
+      {
+        id,
+        name
+      }
+    ] 
+  },
+	lobbyName,
+  password,
+  timeOutId
+}*/
+const lobbies = {};
 
 let lobbyId = 0;
 
@@ -32,14 +45,17 @@ io.on("connection", (socket) => {
           value: socket.data.username,
         });
         break;
+
       case "SEE_LOBBY":
         socket.emit("message", {
           type: "SEE_LOBBY",
           lobbies: Object.values(lobbies),
         });
         break;
+
       case "NEW_LOBBY":
         lobbies[lobbyId] = {
+          lobbyId,
           players: [{ id: socket.id, name: socket.data.username }],
           lobbyName: message.lobbyName,
           password: message.password,
@@ -50,18 +66,13 @@ io.on("connection", (socket) => {
           password: message.password,
           lobbies: Object.values(lobbies),
           players: lobbies[lobbyId].players,
+          lobbyId,
         });
         lobbyId++;
         break;
+
       case "JOIN_LOBBY": {
-        let lobbyId;
-
-        Object.keys(lobbies).forEach((i) => {
-          if (lobbies[i].lobbyName === message.lobbyName) {
-            lobbyId = i;
-          }
-        });
-
+        const lobbyId = message.lobbyId;
         if (message.password === lobbies[lobbyId].password) {
           lobbies[lobbyId].players.push({
             id: socket.id,
@@ -71,6 +82,7 @@ io.on("connection", (socket) => {
             type: "JOIN_LOBBY",
             playerList: lobbies[lobbyId].players,
             lobbyName: lobbies[lobbyId].lobbyName,
+            lobbyId,
           });
           io.emit("message", {
             type: "PLAYER_JOINED",
@@ -126,7 +138,7 @@ io.on("connection", (socket) => {
           endTime: new Date().getTime() + 1000 * 60,
         });
 
-        setTimeout(async () => {
+        const timeoutId = setTimeout(async () => {
           const options = [];
           for (let i = 0; i < 3; ++i) {
             options.push(words[Math.floor(Math.random() * words.length)]);
@@ -151,6 +163,11 @@ io.on("connection", (socket) => {
             options,
           });
         }, 1000 * 60);
+
+        // Check, just in case?
+        if (lobbies[message.lobbyId]) {
+          lobbies[message.lobbyId].timeoutId = timeoutId;
+        }
         break;
 
       case "GOT_ANSWER":
@@ -170,6 +187,12 @@ io.on("connection", (socket) => {
             name: socket.data.username,
             score: socket.data.score,
           }));
+
+          if (lobbies[message.lobbyId]) {
+            // Make sure we don't trigger restart later
+            clearInterval(lobbies[message.lobbyId].timeoutId);
+          }
+
           io.emit("message", {
             type: "END_GAME",
             winnerId: socket.id,

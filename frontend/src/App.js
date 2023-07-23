@@ -17,6 +17,7 @@ function App({
   isCorrect,
   endTime,
   winner,
+  lobbyId,
 }) {
   if (phase === "NAME_PHASE") {
     // render something
@@ -49,6 +50,7 @@ function App({
         isCorrect={isCorrect}
         endTime={endTime}
         playerList={playerList}
+        lobbyId={lobbyId}
       />
     );
   }
@@ -84,13 +86,13 @@ function Lobbies(props) {
   return (
     <>
       {props.lobbies.map((lobby) => (
-        <div key={lobby.lobbyName}>
+        <div key={lobby.lobbyId}>
           Lobby {lobby.lobbyName}{" "}
           <button
             onClick={(e) => {
               socket.emit("message", {
                 type: "JOIN_LOBBY",
-                lobbyName: lobby.lobbyName,
+                lobbyId: lobby.lobbyId,
                 password: joinPassword,
               });
             }}

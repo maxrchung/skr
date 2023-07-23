@@ -2,7 +2,7 @@ import { useState } from "react";
 import Canvas from "../Canvas";
 import { socket } from "../socket";
 
-export default function PlayStep({ drawerId, gameWord, isCorrect }) {
+export default function PlayStep({ drawerId, gameWord, isCorrect, lobbyId }) {
   const [value, setValue] = useState("");
   const [error, setError] = useState(false);
 
@@ -37,6 +37,7 @@ export default function PlayStep({ drawerId, gameWord, isCorrect }) {
               } else {
                 socket.emit("message", {
                   type: "GOT_ANSWER",
+                  lobbyId,
                 });
               }
             }}
