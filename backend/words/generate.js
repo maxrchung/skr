@@ -2361,5 +2361,5 @@ for (const entry of total) {
 }
 
 const arr = [...set];
-fs.writeFileSync("./final.json", JSON.stringify(arr, undefined, 2));
+fs.writeFileSync("./words.json", JSON.stringify(arr, undefined, 2));
 fs.writeFileSync("./duplicates.json", JSON.stringify(duplicates, undefined, 2));

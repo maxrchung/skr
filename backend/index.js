@@ -1,6 +1,7 @@
 // Reference: https://socket.io/get-started/chat
 
 import { Server } from "socket.io";
+import words from "./words/words.json" assert { type: "json" };
 
 const io = new Server(4000, {
   cors: {
@@ -50,7 +51,28 @@ io.on("connection", (socket) => {
         });
         break;
 
-      case "CHOOSE_WORD":
+      case "GET_WORDS": {
+        const options = [];
+        for (let i = 0; i < 3; ++i) {
+          options.push(words[Math.floor(Math.random() * words.length)]);
+        }
+
+        io.emit("message", {
+          type: "GET_WORDS",
+          options,
+        });
+        break;
+      }
+
+      case "MAKE_ME_DRAWER": {
+        io.emit("message", {
+          type: "MAKE_ME_DRAWER",
+          drawerId: socket.id,
+        });
+        break;
+      }
+
+      case "CHOOSE_WORDS":
         break;
 
       default:

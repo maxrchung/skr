@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import App from "./App";
 import { socket } from "./socket";
 import Canvas from "./Canvas";
+import GamePhase from "./GamePhase";
 
 export default function SocketStuff() {
   const [connected, setConnected] = useState(false);
@@ -10,6 +11,9 @@ export default function SocketStuff() {
   const [username, setUsername] = useState("");
   const [lobbyName, setLobbyName] = useState("");
   const [password, setPassword] = useState("");
+
+  const [drawerId, setDrawerId] = useState();
+  const [options, setOptions] = useState([]);
 
   useEffect(() => {
     function onConnect() {
@@ -41,6 +45,15 @@ export default function SocketStuff() {
           console.log("reggin", lobbies);
           setPhase("IN_LOBBY");
           break;
+
+        case "GET_WORDS":
+          setOptions(message.options);
+          break;
+
+        case "MAKE_ME_DRAWER":
+          setDrawerId(message.drawerId);
+          break;
+
         default:
           console.log("Unknown message", message);
           break;
@@ -69,7 +82,27 @@ export default function SocketStuff() {
         hi
       </button>
       <App username={username} phase={phase} lobbies={lobbies} />
-      <Canvas />
+
+      <h2>Canvas stuff:</h2>
+      <Canvas drawerId={drawerId} />
+
+      <h2>Game stuff:</h2>
+      <button
+        onClick={() => {
+          socket.emit("message", { type: "MAKE_ME_DRAWER" });
+        }}
+      >
+        Make me drawer
+      </button>
+
+      <button
+        onClick={() => {
+          socket.emit("message", { type: "GET_WORDS" });
+        }}
+      >
+        Get words
+      </button>
+      <GamePhase options={options} drawerId={drawerId} />
     </>
   );
 }

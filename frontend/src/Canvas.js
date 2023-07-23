@@ -25,19 +25,19 @@ export default function Canvas({ drawerId }) {
     colorRef.current = color;
   }, [color]);
 
-  const drawerIdRef = useRef(-420);
+  const drawerIdRef = useRef(drawerId);
   useEffect(() => {
     drawerIdRef.current = drawerId;
   }, [drawerId]);
 
   const [brushSize, setBrushSize] = useState(5);
-  const brushSizeRef = useRef(5);
+  const brushSizeRef = useRef(brushSize);
   useEffect(() => {
     brushSizeRef.current = brushSize;
   }, [brushSize]);
 
   const [eraserSize, setEraserSize] = useState(20);
-  const eraserSizeRef = useRef(5);
+  const eraserSizeRef = useRef(eraserSize);
   useEffect(() => {
     eraserSizeRef.current = eraserSize;
   }, [eraserSize]);
@@ -48,7 +48,7 @@ export default function Canvas({ drawerId }) {
     displayCtx.lineCap = "round";
 
     const cursor = cursorRef.current;
-    const cursorCtx = display.getContext("2d");
+    const cursorCtx = cursor.getContext("2d");
     cursorCtx.lineCap = "round";
 
     let isDrawing = false;
@@ -56,9 +56,9 @@ export default function Canvas({ drawerId }) {
 
     const emitDraw = (x1, y1) => {
       // Only allow drawer to send draws when that becomes supported
-      // if (socket.id !== drawerIdRef.current) {
-      //   return;
-      // }
+      if (socket.id !== drawerIdRef.current) {
+        return;
+      }
 
       socket.emit("draw", {
         type: "DRAW",
@@ -74,9 +74,9 @@ export default function Canvas({ drawerId }) {
 
     const emitCursor = (x, y) => {
       // Only allow drawer to send draws when that becomes supported
-      // if (socket.id !== drawerIdRef.current) {
-      //   return;
-      // }
+      if (socket.id !== drawerIdRef.current) {
+        return;
+      }
 
       socket.emit("draw", {
         type: "CURSOR",
@@ -102,12 +102,12 @@ export default function Canvas({ drawerId }) {
     const onMouseMove = (e) => {
       emitCursor(e.offsetX, e.offsetY);
 
-      position.x = e.offsetX;
-      position.y = e.offsetY;
-
       if (isDrawing) {
         emitDraw(e.offsetX, e.offsetY);
       }
+
+      position.x = e.offsetX;
+      position.y = e.offsetY;
     };
 
     const onMouseUp = (e) => {
