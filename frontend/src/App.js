@@ -4,7 +4,7 @@ import { socket } from "./socket";
 import GamePhase from "./Game/GamePhase";
 
 function App({
-  username,
+  name,
   lobbies,
   phase,
   lobbyName,
@@ -29,7 +29,7 @@ function App({
     );
   } else if (phase === "OUT_LOBBY") {
     // render something else
-    return <Lobbies name={username} lobbies={lobbies}></Lobbies>;
+    return <Lobbies name={name} lobbies={lobbies}></Lobbies>;
   } else if (phase === "IN_LOBBY") {
     // render something else
     return (
@@ -37,6 +37,7 @@ function App({
         lobbyName={lobbyName}
         playerList={playerList}
         winner={winner}
+        lobbyId={lobbyId}
       ></LobbyView>
     );
   } else if (phase === "GAME") {
@@ -150,7 +151,7 @@ function Lobbies(props) {
   );
 }
 
-function LobbyView({ lobbyName, playerList, winner }) {
+function LobbyView({ lobbyName, playerList, winner, lobbyId }) {
   return (
     <div>
       <h4>Welcome to lobby {lobbyName}!</h4>
@@ -172,7 +173,7 @@ function LobbyView({ lobbyName, playerList, winner }) {
       <br></br>
       <button
         onClick={() => {
-          socket.emit("message", { type: "START_GAME" });
+          socket.emit("message", { type: "START_GAME", lobbyId });
         }}
       >
         Start Game!!!!!!!!!!!!

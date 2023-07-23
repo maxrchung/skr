@@ -11,14 +11,6 @@ const io = new Server(4000, {
 
 /* 
 {
-  lobbyId : {
-    players : [
-      {
-        id,
-        name
-      }
-    ] 
-  },
 	lobbyName,
   password,
   timeOutId
@@ -29,6 +21,7 @@ let lobbyId = 0;
 
 io.on("connection", (socket) => {
   console.log("Connected: " + socket.id);
+  socket.data.id = socket.id;
 
   socket.on("disconnect", () => {
     console.log("Disconnected: " + socket.id);
@@ -39,10 +32,10 @@ io.on("connection", (socket) => {
 
     switch (message.type) {
       case "SET_NAME":
-        socket.data.username = message.value;
+        socket.data.name = message.value;
         socket.emit("message", {
           type: "SET_NAME",
-          value: socket.data.username,
+          value: socket.data.name,
         });
         break;
 
@@ -56,37 +49,43 @@ io.on("connection", (socket) => {
       case "NEW_LOBBY":
         lobbies[lobbyId] = {
           lobbyId,
-          players: [{ id: socket.id, name: socket.data.username }],
           lobbyName: message.lobbyName,
           password: message.password,
         };
+
+        socket.join(lobbyId);
+
         socket.emit("message", {
           type: "NEW_LOBBY",
           lobbyName: message.lobbyName,
           password: message.password,
           lobbies: Object.values(lobbies),
-          players: lobbies[lobbyId].players,
+          playerList: [socket.data],
           lobbyId,
         });
+
         lobbyId++;
         break;
 
       case "JOIN_LOBBY": {
         const lobbyId = message.lobbyId;
         if (message.password === lobbies[lobbyId].password) {
-          lobbies[lobbyId].players.push({
-            id: socket.id,
-            name: socket.data.username,
-          });
+          socket.join(lobbyId);
+
+          const playerList = (await io.in(lobbyId).fetchSockets()).map(
+            (socket) => socket.data
+          );
+
           socket.emit("message", {
             type: "JOIN_LOBBY",
-            playerList: lobbies[lobbyId].players,
+            playerList,
             lobbyName: lobbies[lobbyId].lobbyName,
             lobbyId,
           });
-          io.emit("message", {
+
+          io.to(lobbyId).emit("message", {
             type: "PLAYER_JOINED",
-            playerList: lobbies[lobbyId].players,
+            playerList,
           });
         }
         break;
@@ -103,7 +102,7 @@ io.on("connection", (socket) => {
         const ids = sockets.map((socket) => socket.id);
         const nextDrawer = ids[Math.floor(Math.random() * ids.length)];
 
-        io.emit("message", {
+        io.to(message.lobbyId).emit("message", {
           type: "START_GAME",
           drawerId: nextDrawer,
           options,
@@ -132,7 +131,7 @@ io.on("connection", (socket) => {
       }
 
       case "CHOOSE_WORD":
-        io.emit("message", {
+        io.to(message.lobbyId).emit("message", {
           type: "CHOOSE_WORD",
           option: message.option,
           endTime: new Date().getTime() + 1000 * 60,
@@ -144,30 +143,27 @@ io.on("connection", (socket) => {
             options.push(words[Math.floor(Math.random() * words.length)]);
           }
 
-          // TODO: Get sockets in room
-          const sockets = await io.fetchSockets();
-          const ids = sockets.map((socket) => socket.id);
-          const index = ids.findIndex((id) => id === message.drawerId);
+          const sockets = await io.in(message.lobbyId).fetchSockets();
+          const currIndex = sockets.findIndex(
+            (socket) => socket.id === message.drawerId
+          );
 
           let nextIndex;
-          if (index === -1 || index === ids.length - 1) {
+          if (currIndex === -1 || currIndex === ids.length - 1) {
             nextIndex = 0;
           } else {
-            nextIndex = (index + 1) % ids.length;
+            nextIndex = (currIndex + 1) % ids.length;
           }
-          const nextDrawer = ids[nextIndex];
+          const nextDrawer = sockets[nextIndex].id;
 
-          io.emit("message", {
+          io.to(message.lobbyId).emit("message", {
             type: "RESET_ROUND",
             drawerId: nextDrawer,
             options,
           });
         }, 1000 * 60);
 
-        // Check, just in case?
-        if (lobbies[message.lobbyId]) {
-          lobbies[message.lobbyId].timeoutId = timeoutId;
-        }
+        lobbies[message.lobbyId].timeoutId = timeoutId;
         break;
 
       case "GOT_ANSWER":
@@ -182,30 +178,23 @@ io.on("connection", (socket) => {
           sockets.forEach((socket) => {
             socket.data.score = 0;
           });
-          const playerList = sockets.map((socket) => ({
-            id: socket.id,
-            name: socket.data.username,
-            score: socket.data.score,
-          }));
 
-          if (lobbies[message.lobbyId]) {
-            // Make sure we don't trigger restart later
-            clearInterval(lobbies[message.lobbyId].timeoutId);
-          }
+          // Make sure we don't trigger timeout later
+          clearTimeout(lobbies[message.lobbyId].timeoutId);
 
-          io.emit("message", {
+          io.to(message.lobbyId).emit("message", {
             type: "END_GAME",
             winnerId: socket.id,
-            playerList,
+            playerList: (await io.in(lobbyId).fetchSockets()).map(
+              (socket) => socket.data
+            ),
           });
         } else {
-          io.emit("message", {
+          io.to(message.lobbyId).emit("message", {
             type: "GOT_ANSWER",
-            playerList: (await io.fetchSockets()).map((socket) => ({
-              id: socket.id,
-              name: socket.data.username,
-              score: socket.data.score,
-            })),
+            playerList: (await io.in(lobbyId).fetchSockets()).map(
+              (socket) => socket.data
+            ),
           });
         }
         break;

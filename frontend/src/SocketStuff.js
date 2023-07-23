@@ -6,7 +6,7 @@ export default function SocketStuff() {
   const [connected, setConnected] = useState(false);
   const [phase, setPhase] = useState("NAME_PHASE");
   const [lobbies, setLobbies] = useState([]);
-  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
 
   const [lobbyId, setLobbyId] = useState("");
   const [lobbyName, setLobbyName] = useState("");
@@ -37,7 +37,7 @@ export default function SocketStuff() {
 
       switch (message.type) {
         case "SET_NAME":
-          setUsername(message.value);
+          setName(message.value);
           setPhase("OUT_LOBBY");
           break;
         case "SEE_LOBBY":
@@ -48,7 +48,7 @@ export default function SocketStuff() {
           setLobbyName(message.lobbyName);
           setLobbyId(message.lobbyId);
           setLobbies(message.lobbies);
-          setPlayerList(message.players);
+          setPlayerList(message.playerList);
           setPhase("IN_LOBBY");
           break;
 
@@ -127,7 +127,7 @@ export default function SocketStuff() {
     <>
       <div>You are currently: {connected ? "Connected" : "Disconnected"}</div>
       <div>You are ID: {socket.id}</div>
-      <div>You're name: {username}</div>
+      <div>You're name: {name}</div>
       <button
         onClick={() => {
           socket.emit("message", "hi");
@@ -153,7 +153,7 @@ export default function SocketStuff() {
       </button>
 
       <App
-        username={username}
+        name={name}
         phase={phase}
         lobbies={lobbies}
         lobbyName={lobbyName}

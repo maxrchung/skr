@@ -1,7 +1,6 @@
 import { socket } from "../socket";
 
 export default function ChooseStep({ drawerId, options, playerList, lobbyId }) {
-  console.log("drawerId", drawerId);
   if (drawerId === socket.id) {
     return (
       <>
