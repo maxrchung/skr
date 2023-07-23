@@ -14,7 +14,7 @@ export default function GamePhase({
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const seconds = endTime - new Date().getTime() / 1000;
+      const seconds = (endTime - new Date().getTime()) / 1000;
       setRemaining(seconds);
     }, 100);
 
