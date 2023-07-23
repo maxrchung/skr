@@ -112,7 +112,7 @@ io.on("connection", (socket) => {
           const index = ids.findIndex((id) => id === message.drawerId);
 
           let nextIndex;
-          if (index === -1 || ids.length - 1) {
+          if (index === -1 || index === ids.length - 1) {
             nextIndex = 0;
           } else {
             nextIndex = (index + 1) % ids.length;
