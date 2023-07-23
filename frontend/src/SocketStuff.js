@@ -88,7 +88,9 @@ export default function SocketStuff() {
           break;
 
         case "GOT_ANSWER":
-          setIsCorrect(true);
+          if (socket.id === message.answerId) {
+            setIsCorrect(true);
+          }
           setPlayerList(message.playerList);
           break;
 
@@ -98,6 +100,7 @@ export default function SocketStuff() {
           setOptions(message.options);
           setGameWord("");
           setGameStep("CHOOSE");
+          setPlayerList(message.playerList);
           break;
 
         case "END_GAME":

@@ -9,19 +9,54 @@ const io = new Server(4000, {
   },
 });
 
-/* 
+/* socket.data
 {
-	lobbyName,
-  password,
-  timeOutId
-}*/
-const lobbies = {};
+  id,
+  name,
+  score,
+  // Flag whether player scored for the round, used to determine if we need to skip
+  hasScored  
+}
+*/
 
+/* lobbies
+{
+  lobbyId: {
+    lobbyId,
+    lobbyName,
+    password,
+    timeOutId
+  }
+}
+*/
+const lobbies = {};
 let lobbyId = 0;
+
+const getOptions = () => {
+  const options = [];
+  for (let i = 0; i < 3; ++i) {
+    options.push(words[Math.floor(Math.random() * words.length)]);
+  }
+  return options;
+};
+
+const getNextDrawerId = async (lobbyId, oldDrawerId) => {
+  const sockets = await io.in(lobbyId).fetchSockets();
+  const currIndex = sockets.findIndex((socket) => socket.id === oldDrawerId);
+
+  let nextIndex;
+  if (currIndex === -1 || currIndex === sockets.length - 1) {
+    nextIndex = 0;
+  } else {
+    nextIndex = (currIndex + 1) % sockets.length;
+  }
+  const nextDrawerId = sockets[nextIndex].id;
+  return nextDrawerId;
+};
 
 io.on("connection", (socket) => {
   console.log("Connected: " + socket.id);
-  socket.data.id = socket.id;
+  socket.data.id = socket.id; // for convenience
 
   socket.on("disconnect", () => {
     console.log("Disconnected: " + socket.id);
@@ -92,27 +127,25 @@ io.on("connection", (socket) => {
       }
 
       case "START_GAME":
-        const options = [];
-        for (let i = 0; i < 3; ++i) {
-          options.push(words[Math.floor(Math.random() * words.length)]);
-        }
+        const options = getOptions();
 
         const sockets = await io.in(message.lobbyId).fetchSockets();
-        const nextDrawer =
+        const nextDrawerId =
           sockets[Math.floor(Math.random() * sockets.length)].id;
+
+        (await io.in(message.lobbyId).fetchSockets()).forEach(
+          (socket) => (socket.data.hasScored = false)
+        );
 
         io.to(message.lobbyId).emit("message", {
           type: "START_GAME",
-          drawerId: nextDrawer,
+          drawerId: nextDrawerId,
           options,
         });
         break;
 
       case "GET_WORDS": {
-        const options = [];
-        for (let i = 0; i < 3; ++i) {
-          options.push(words[Math.floor(Math.random() * words.length)]);
-        }
+        const options = getOptions();
 
         io.emit("message", {
           type: "GET_WORDS",
@@ -137,10 +170,7 @@ io.on("connection", (socket) => {
         });
 
         const timeoutId = setTimeout(async () => {
-          const options = [];
-          for (let i = 0; i < 3; ++i) {
-            options.push(words[Math.floor(Math.random() * words.length)]);
-          }
+          const options = getOptions();
 
           const sockets = await io.in(message.lobbyId).fetchSockets();
           const currIndex = sockets.findIndex(
@@ -153,51 +183,96 @@ io.on("connection", (socket) => {
           } else {
             nextIndex = (currIndex + 1) % sockets.length;
           }
-          const nextDrawer = sockets[nextIndex].id;
+          const nextDrawerId = sockets[nextIndex].id;
 
-          io.to(message.lobbyId).emit("message", {
-            type: "RESET_ROUND",
-            drawerId: nextDrawer,
-            options,
-          });
+          (await io.in(message.lobbyId).fetchSockets()).forEach(
+            (socket) => (socket.data.hasScored = false)
+          );
+
+          if (socket.data.score === 5) {
+            sockets.forEach((socket) => (socket.data.score = 0));
+
+            io.to(message.lobbyId).emit("message", {
+              type: "END_GAME",
+              winnerId: socket.id,
+              playerList: (await io.in(lobbyId).fetchSockets()).map(
+                (socket) => socket.data
+              ),
+            });
+          } else {
+            io.to(message.lobbyId).emit("message", {
+              type: "RESET_ROUND",
+              drawerId: nextDrawerId,
+              options,
+              playerList: (await io.in(lobbyId).fetchSockets()).map(
+                (socket) => socket.data
+              ),
+            });
+          }
         }, 1000 * 60);
 
         lobbies[message.lobbyId].timeoutId = timeoutId;
         break;
 
-      case "GOT_ANSWER":
-        // TODO: Update scores or something
+      case "GOT_ANSWER": {
         if (socket.data.score) {
           socket.data.score++;
         } else {
           socket.data.score = 1;
         }
-        if (socket.data.score === 5) {
-          const sockets = await io.fetchSockets();
-          sockets.forEach((socket) => {
-            socket.data.score = 0;
-          });
 
-          // Make sure we don't trigger timeout later
-          clearTimeout(lobbies[message.lobbyId].timeoutId);
+        socket.data.hasScored = true;
 
-          io.to(message.lobbyId).emit("message", {
-            type: "END_GAME",
-            winnerId: socket.id,
-            playerList: (await io.in(lobbyId).fetchSockets()).map(
-              (socket) => socket.data
-            ),
-          });
+        // if everyone has scored then go to next round
+        const sockets = await io.in(message.lobbyId).fetchSockets();
+        const notScored = sockets.filter((socket) => !socket.data.hasScored);
+
+        // === 1 to ignore drawer
+        if (notScored === 1) {
+          const options = getOptions();
+          const nextDrawerId = getNextDrawerId(
+            message.lobbyId,
+            message.drawerId
+          );
+
+          const sockets = await io.in(message.lobbyId).fetchSockets();
+          sockets.forEach((socket) => (socket.data.hasScored = false));
+
+          if (socket.data.score === 5) {
+            sockets.forEach((socket) => (socket.data.score = 0));
+
+            // Make sure we don't trigger timeout later
+            clearTimeout(lobbies[message.lobbyId].timeoutId);
+
+            io.to(message.lobbyId).emit("message", {
+              type: "END_GAME",
+              winnerId: socket.id,
+              playerList: (await io.in(lobbyId).fetchSockets()).map(
+                (socket) => socket.data
+              ),
+            });
+          } else {
+            io.to(message.lobbyId).emit("message", {
+              type: "RESET_ROUND",
+              drawerId: nextDrawerId,
+              options,
+              playerList: (await io.in(lobbyId).fetchSockets()).map(
+                (socket) => socket.data
+              ),
+            });
+          }
         } else {
           io.to(message.lobbyId).emit("message", {
             type: "GOT_ANSWER",
+            answerId: socket.id,
             playerList: (await io.in(lobbyId).fetchSockets()).map(
               (socket) => socket.data
             ),
           });
         }
-        break;
 
+        break;
+      }
       default:
         console.log("Unknown message", message);
     }

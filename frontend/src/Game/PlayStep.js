@@ -38,6 +38,7 @@ export default function PlayStep({ drawerId, gameWord, isCorrect, lobbyId }) {
                 socket.emit("message", {
                   type: "GOT_ANSWER",
                   lobbyId,
+                  drawerId,
                 });
               }
             }}
