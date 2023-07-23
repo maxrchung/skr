@@ -51,6 +51,7 @@ export default function SocketStuff() {
 
         case "JOIN_LOBBY":
           setPlayerList(message.playerList);
+          setLobbyName(message.lobbyName);
           setPhase("IN_LOBBY");
           break;
 

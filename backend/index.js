@@ -67,6 +67,7 @@ io.on("connection", (socket) => {
           socket.emit("message", {
             type: "JOIN_LOBBY",
             playerList: lobbies[lobbyId].players,
+            lobbyName: lobbies[lobbyId].lobbyName,
           });
         }
         io.emit("message", {
