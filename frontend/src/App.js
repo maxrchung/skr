@@ -2,8 +2,17 @@ import logo from "./logo.svg";
 import "./App.css";
 import { useState } from "react";
 import { socket } from "./socket";
+import GamePhase from "./Game/GamePhase";
 
-function App({ username, lobbies, phase }) {
+function App({
+  username,
+  lobbies,
+  phase,
+  options,
+  drawerId,
+  gameWord,
+  gameStep,
+}) {
   if (phase === "NAME_PHASE") {
     // render something
     return (
@@ -20,6 +29,15 @@ function App({ username, lobbies, phase }) {
     return <LobbyView></LobbyView>;
   } else if (phase === "GAME") {
     // render something else
+    console.log(phase);
+    return (
+      <GamePhase
+        options={options}
+        drawerId={drawerId}
+        gameWord={gameWord}
+        gameStep={gameStep}
+      />
+    );
   }
 }
 

@@ -88,29 +88,31 @@ export default function SocketStuff() {
       >
         hi
       </button>
-      <App username={username} phase={phase} lobbies={lobbies} />
+      <button onClick={() => setPhase("NAME_PHASE")}>Set name phase</button>
+      <button onClick={() => setPhase("OUT_LOBBY")}>Set out lobby phase</button>
+      <button onClick={() => setPhase("IN_LOBBY")}>Set in lobby phase</button>
+      <button onClick={() => setPhase("GAME")}>Set game phase</button>
 
-      <h2>Game stuff:</h2>
+      <button onClick={() => setGameStep("CHOOSE")}>Set game ChooseStep</button>
+      <button onClick={() => setGameStep("PLAY")}>Set game PlayStep</button>
       <button
-        onClick={() => {
-          socket.emit("message", { type: "MAKE_ME_DRAWER" });
-        }}
+        onClick={() => socket.emit("message", { type: "MAKE_ME_DRAWER" })}
       >
         Make me drawer
       </button>
 
-      <button
-        onClick={() => {
-          socket.emit("message", { type: "GET_WORDS" });
-        }}
-      >
+      <button onClick={() => socket.emit("message", { type: "GET_WORDS" })}>
         Get words
       </button>
-      <GamePhase
+
+      <App
+        username={username}
+        phase={phase}
+        lobbies={lobbies}
         options={options}
         drawerId={drawerId}
-        gameWord={gameWord}
         gameStep={gameStep}
+        gameWord={gameWord}
       />
     </>
   );
