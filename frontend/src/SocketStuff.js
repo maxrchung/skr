@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import App from "./App";
 import { socket } from "./socket";
-import GamePhase from "./Game/GamePhase";
 
 export default function SocketStuff() {
   const [connected, setConnected] = useState(false);
