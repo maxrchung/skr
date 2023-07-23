@@ -30,11 +30,7 @@ function App({
   } else if (phase === "IN_LOBBY") {
     // render something else
     return (
-      <LobbyView
-        lobbyName={lobbyName}
-        password={password}
-        playerList={playerList}
-      ></LobbyView>
+      <LobbyView lobbyName={lobbyName} playerList={playerList}></LobbyView>
     );
   } else if (phase === "GAME") {
     // render something else
@@ -87,7 +83,6 @@ function Lobbies(props) {
           Lobby {lobby.lobbyName}{" "}
           <button
             onClick={(e) => {
-              setJoinPassword(joinPassword);
               socket.emit("message", {
                 type: "JOIN_LOBBY",
                 lobbyName: lobby.lobbyName,
@@ -100,7 +95,12 @@ function Lobbies(props) {
           {lobby.password && (
             <>
               <label>Enter Password</label>
-              <input value={joinPassword}></input>
+              <input
+                value={joinPassword}
+                onInput={(e) => {
+                  setJoinPassword(e.target.value);
+                }}
+              ></input>
             </>
           )}
         </div>
@@ -143,14 +143,12 @@ function Lobbies(props) {
   );
 }
 
-function LobbyView({ lobbyName, password, playerList }) {
+function LobbyView({ lobbyName, playerList }) {
   console.log(playerList);
 
   return (
     <div>
       <h4>Welcome to lobby {lobbyName}!</h4>
-      <label>Password: {password}</label>
-      <br />
       <br />
       <b>Player List</b>
       {playerList.map((player) => (
@@ -158,6 +156,8 @@ function LobbyView({ lobbyName, password, playerList }) {
           <label>{player.name}</label>
         </div>
       ))}
+      <br></br>
+      <button>Start Game!!!!!!!!!!!!</button>
     </div>
   );
 }
