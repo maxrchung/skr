@@ -1,6 +1,6 @@
 import { socket } from "../socket";
 
-export default function ChooseStep({ drawerId, options }) {
+export default function ChooseStep({ drawerId, options, playerList }) {
   if (drawerId === socket.id) {
     return (
       <>
@@ -22,6 +22,11 @@ export default function ChooseStep({ drawerId, options }) {
       </>
     );
   } else {
-    return <p>{drawerId} is currently picking...</p>;
+    return (
+      <p>
+        {playerList.find((player) => player.id === drawerId).name} is currently
+        picking...
+      </p>
+    );
   }
 }

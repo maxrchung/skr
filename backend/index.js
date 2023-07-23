@@ -9,7 +9,8 @@ const io = new Server(4000, {
   },
 });
 
-const lobbies = {};
+const lobbies = {}; /* { lobby_id : { players : [{ id, name}] },
+						lobbyName, password}*/
 
 let lobbyId = 0;
 
@@ -20,7 +21,7 @@ io.on("connection", (socket) => {
     console.log("Disconnected: " + socket.id);
   });
 
-  socket.on("message", (message) => {
+  socket.on("message", async (message) => {
     console.log("message", message);
 
     switch (message.type) {
@@ -54,11 +55,13 @@ io.on("connection", (socket) => {
         break;
       case "JOIN_LOBBY": {
         let lobbyId;
+
         Object.keys(lobbies).forEach((i) => {
           if (lobbies[i].lobbyName === message.lobbyName) {
             lobbyId = i;
           }
         });
+
         if (message.password === lobbies[lobbyId].password) {
           lobbies[lobbyId].players.push({
             id: socket.id,
@@ -69,13 +72,31 @@ io.on("connection", (socket) => {
             playerList: lobbies[lobbyId].players,
             lobbyName: lobbies[lobbyId].lobbyName,
           });
+          io.emit("message", {
+            type: "PLAYER_JOINED",
+            playerList: lobbies[lobbyId].players,
+          });
         }
-        io.emit("message", {
-          type: "PLAYER_JOINED",
-          playerList: lobbies[lobbyId].players,
-        });
         break;
       }
+
+      case "START_GAME":
+        const options = [];
+        for (let i = 0; i < 3; ++i) {
+          options.push(words[Math.floor(Math.random() * words.length)]);
+        }
+
+        // TODO: Get sockets in room
+        const sockets = await io.fetchSockets();
+        const ids = sockets.map((socket) => socket.id);
+        const nextDrawer = ids[Math.floor(Math.random() * ids.length)];
+
+        io.emit("message", {
+          type: "START_GAME",
+          drawerId: nextDrawer,
+          options,
+        });
+        break;
 
       case "GET_WORDS": {
         const options = [];
@@ -134,7 +155,36 @@ io.on("connection", (socket) => {
 
       case "GOT_ANSWER":
         // TODO: Update scores or something
-        io.emit("message", { type: "GOT_ANSWER" });
+        if (socket.data.score) {
+          socket.data.score++;
+        } else {
+          socket.data.score = 1;
+        }
+        if (socket.data.score === 5) {
+          const sockets = await io.fetchSockets();
+          sockets.forEach((socket) => {
+            socket.data.score = 0;
+          });
+          const playerList = sockets.map((socket) => ({
+            id: socket.id,
+            name: socket.data.username,
+            score: socket.data.score,
+          }));
+          io.emit("message", {
+            type: "END_GAME",
+            winnerId: socket.id,
+            playerList,
+          });
+        } else {
+          io.emit("message", {
+            type: "GOT_ANSWER",
+            playerList: (await io.fetchSockets()).map((socket) => ({
+              id: socket.id,
+              name: socket.data.username,
+              score: socket.data.score,
+            })),
+          });
+        }
         break;
 
       default:

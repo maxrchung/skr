@@ -9,6 +9,7 @@ export default function GamePhase({
   gameWord,
   isCorrect,
   endTime,
+  playerList,
 }) {
   const [remaining, setRemaining] = useState(0);
 
@@ -22,21 +23,31 @@ export default function GamePhase({
       clearInterval(interval);
     };
   }, [endTime]);
-
-  if (gameStep === "CHOOSE") {
-    return <ChooseStep drawerId={drawerId} options={options} />;
-  } else if (gameStep === "PLAY") {
-    return (
-      <>
-        <p>
-          Time remaining: <strong>{remaining < 0 ? 0 : remaining}</strong>
-        </p>
-        <PlayStep
+  return (
+    <>
+      {playerList.map((player) => (
+        <div key={player.id}>
+          {player.name}: {player.score || 0}
+        </div>
+      ))}
+      {gameStep === "CHOOSE" ? (
+        <ChooseStep
           drawerId={drawerId}
-          gameWord={gameWord}
-          isCorrect={isCorrect}
+          options={options}
+          playerList={playerList}
         />
-      </>
-    );
-  }
+      ) : (
+        <>
+          <p>
+            Time remaining: <strong>{remaining < 0 ? 0 : remaining}</strong>
+          </p>
+          <PlayStep
+            drawerId={drawerId}
+            gameWord={gameWord}
+            isCorrect={isCorrect}
+          />
+        </>
+      )}
+    </>
+  );
 }

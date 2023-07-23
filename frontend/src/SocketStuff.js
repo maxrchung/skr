@@ -20,6 +20,8 @@ export default function SocketStuff() {
   const [isCorrect, setIsCorrect] = useState(false);
   const [endTime, setEndTime] = useState(0);
 
+  const [winner, setWinner] = useState("");
+
   useEffect(() => {
     function onConnect() {
       setConnected(true);
@@ -41,7 +43,6 @@ export default function SocketStuff() {
           setLobbies(message.lobbies);
           break;
         case "NEW_LOBBY":
-          setPlayerList(message);
           setPassword(message.password);
           setLobbyName(message.lobbyName);
           setLobbies(message.lobbies);
@@ -57,6 +58,16 @@ export default function SocketStuff() {
 
         case "PLAYER_JOINED":
           setPlayerList(message.playerList);
+          break;
+
+        case "START_GAME":
+          setPhase("GAME");
+          setIsCorrect(false);
+          setDrawerId(message.drawerId);
+          setOptions(message.options);
+          setGameWord("");
+          setGameStep("CHOOSE");
+          setWinner("");
           break;
 
         case "GET_WORDS":
@@ -75,6 +86,7 @@ export default function SocketStuff() {
 
         case "GOT_ANSWER":
           setIsCorrect(true);
+          setPlayerList(message.playerList);
           break;
 
         case "RESET_ROUND":
@@ -83,6 +95,12 @@ export default function SocketStuff() {
           setOptions(message.options);
           setGameWord("");
           setGameStep("CHOOSE");
+          break;
+
+        case "END_GAME":
+          setPhase("IN_LOBBY");
+          setWinner(message.winnerId);
+          setPlayerList(message.playerList);
           break;
 
         default:
@@ -105,6 +123,8 @@ export default function SocketStuff() {
   return (
     <>
       <div>You are currently: {connected ? "Connected" : "Disconnected"}</div>
+      <div>You are ID: {socket.id}</div>
+      <div>You're name: {username}</div>
       <button
         onClick={() => {
           socket.emit("message", "hi");
@@ -142,6 +162,7 @@ export default function SocketStuff() {
         gameWord={gameWord}
         isCorrect={isCorrect}
         endTime={endTime}
+        winner={winner}
       />
     </>
   );

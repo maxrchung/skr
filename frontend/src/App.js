@@ -16,6 +16,7 @@ function App({
   gameStep,
   isCorrect,
   endTime,
+  winner,
 }) {
   if (phase === "NAME_PHASE") {
     // render something
@@ -31,7 +32,11 @@ function App({
   } else if (phase === "IN_LOBBY") {
     // render something else
     return (
-      <LobbyView lobbyName={lobbyName} playerList={playerList}></LobbyView>
+      <LobbyView
+        lobbyName={lobbyName}
+        playerList={playerList}
+        winner={winner}
+      ></LobbyView>
     );
   } else if (phase === "GAME") {
     // render something else
@@ -43,6 +48,7 @@ function App({
         gameStep={gameStep}
         isCorrect={isCorrect}
         endTime={endTime}
+        playerList={playerList}
       />
     );
   }
@@ -75,11 +81,8 @@ function Lobbies(props) {
   const [newLobbyPassword, setNewLobbyPassword] = useState("");
   const [joinPassword, setJoinPassword] = useState("");
 
-  console.log("props", props);
-
   return (
     <>
-      <div>You're Username: {props.name}</div>
       {props.lobbies.map((lobby) => (
         <div key={lobby.lobbyName}>
           Lobby {lobby.lobbyName}{" "}
@@ -145,13 +148,19 @@ function Lobbies(props) {
   );
 }
 
-function LobbyView({ lobbyName, playerList }) {
-  console.log(playerList);
-
+function LobbyView({ lobbyName, playerList, winner }) {
   return (
     <div>
       <h4>Welcome to lobby {lobbyName}!</h4>
       <br />
+      {winner && (
+        <p>
+          <i>
+            <b>{playerList.find((player) => player.id === winner).name}</b>
+          </i>
+          , you're winner!
+        </p>
+      )}
       <b>Player List</b>
       {playerList.map((player) => (
         <div key={player.id}>
@@ -159,7 +168,13 @@ function LobbyView({ lobbyName, playerList }) {
         </div>
       ))}
       <br></br>
-      <button>Start Game!!!!!!!!!!!!</button>
+      <button
+        onClick={() => {
+          socket.emit("message", { type: "START_GAME" });
+        }}
+      >
+        Start Game!!!!!!!!!!!!
+      </button>
     </div>
   );
 }
