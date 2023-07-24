@@ -23,9 +23,10 @@ function App({
     // render something
     return (
       <div className="skr-name">
-        <h1>SKR</h1>
-        <p>hey you need to enter a name broski</p>
+        <h1 className="SKR">SKR</h1>
+        <p className="hellosu">hey you need to enter a name broski</p>
         <NameInput />
+        <p className="我很喜歡冰淇淋">我很喜歡冰淇淋</p>
       </div>
     );
   } else if (phase === "OUT_LOBBY") {
@@ -70,6 +71,7 @@ function NameInput() {
         }}
       />
       <button
+        className="name-button"
         onClick={(e) => {
           socket.emit("message", { type: "SET_NAME", value });
         }}
@@ -131,7 +133,7 @@ function Lobbies(props) {
 function LobbyEntry({ lobby }) {
   const [password, setPassword] = useState("");
   return (
-    <div key={lobby.lobbyId}>
+    <div className="lobbys" key={lobby.lobbyId}>
       Lobby {lobby.lobbyName}{" "}
       <button
         onClick={(e) => {
@@ -162,28 +164,24 @@ function LobbyEntry({ lobby }) {
 function LobbyView({ lobbyName, playerList, winner, lobbyId }) {
   return (
     <div>
-      <h4>Welcome to lobby {lobbyName}!</h4>
+      <h4 className="lobby-welcome">Welcome to lobby {lobbyName}!</h4>
       <br />
       {winner.length > 0 && (
-        <fieldset>
-          <legend>
-            WINNERS!!!! YOU WON GOOD JOBYOU WON GOOD JOBYOU WON GOOD JOB
-          </legend>
-          <ul>
-            {winner.map((id) => (
-              <li key={id}>
-                <i>
-                  <b>{playerList.find((player) => player.id === id).name}</b>
-                </i>
-              </li>
-            ))}
-          </ul>
-        </fieldset>
+        <div className="weiner">
+          <h2>WINNERS!!!! YOU WON GOOD JOBYOU WON GOOD JOBYOU WON GOOD JOB</h2>
+          {winner.map((id) => (
+            <i key={id}>
+              <b className="weiners">
+                {playerList.find((player) => player.id === id).name}
+              </b>
+            </i>
+          ))}
+        </div>
       )}
-      <b>Player List</b>
+      <b className="player-list-txt">Player List</b>
       {playerList.map((player) => (
         <div key={player.id}>
-          <label>{player.name}</label>
+          <label className="players">{player.name}</label>
         </div>
       ))}
       <br></br>

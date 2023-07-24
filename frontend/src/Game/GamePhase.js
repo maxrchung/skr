@@ -26,9 +26,9 @@ export default function GamePhase({
   }, [endTime]);
   return (
     <>
-      <h4>5 points to win!!! Goo luckk!</h4>
+      <h2>5 points to win!!! Goo luckk!</h2>
       {playerList.map((player) => (
-        <div key={player.id}>
+        <div className="player-scores" key={player.id}>
           {player.name}: {player.score || 0}
         </div>
       ))}
