@@ -61,7 +61,7 @@ const leaveLobby = async (socket) => {
 
     if (sockets.length === 1) {
       // Make sure we don't trigger timeout later
-      clearTimeout(lobbies[lobbyId].timeoutId);
+      clearTimeout(lobbies[lobbyId]?.timeoutId);
       delete lobbies[lobbyId];
     } else {
       const playerList = sockets
