@@ -194,7 +194,10 @@ export default function Canvas({ drawerId }) {
             type="range"
             min="1"
             max="100"
-            onChange={(event) => setBrushSize(event.target.value)}
+            onChange={(event) => {
+              setBrushSize(event.target.value);
+              setColor("black");
+            }}
             value={brushSize}
           />
 
@@ -203,7 +206,10 @@ export default function Canvas({ drawerId }) {
             type="range"
             min="1"
             max="100"
-            onChange={(event) => setEraserSize(event.target.value)}
+            onChange={(event) => {
+              setEraserSize(event.target.value);
+              setColor("white");
+            }}
             value={eraserSize}
           />
 

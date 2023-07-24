@@ -21,7 +21,7 @@ export default function SocketStuff() {
   const [isCorrect, setIsCorrect] = useState(false);
   const [endTime, setEndTime] = useState(0);
 
-  const [winner, setWinner] = useState("");
+  const [winner, setWinner] = useState([]);
 
   useEffect(() => {
     function onConnect() {
@@ -70,7 +70,7 @@ export default function SocketStuff() {
           setOptions(message.options);
           setGameWord("");
           setGameStep("CHOOSE");
-          setWinner("");
+          setWinner([]);
           break;
 
         case "GET_WORDS":
@@ -105,7 +105,7 @@ export default function SocketStuff() {
 
         case "END_GAME":
           setPhase("IN_LOBBY");
-          setWinner(message.winnerId);
+          setWinner(message.winnerIds);
           setPlayerList(message.playerList);
           break;
 

@@ -1,3 +1,24 @@
+.player-scores {
+  font-size: 3vh;
+}
+
+.players {
+  font-size: 1.727vh;
+}
+
+.player-list-txt {
+  font-size: 2vh;
+}
+
+.weiners {
+  font-size: 2vh;
+  color: #a9ac15;
+}
+
+.weiner {
+  margin-bottom: 4vh;
+}
+
 .lobby-welcome {
   font-size: 2.727vh;
 }

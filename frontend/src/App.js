@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { socket } from "./socket";
 import GamePhase from "./Game/GamePhase";
 
@@ -85,53 +85,29 @@ function NameInput() {
 function Lobbies(props) {
   const [newLobbyName, setNewLobbyName] = useState("");
   const [newLobbyPassword, setNewLobbyPassword] = useState("");
-  const [joinPassword, setJoinPassword] = useState("");
+
+  // Load lobbies when this component initially loads
+  useEffect(() => {
+    socket.emit("message", { type: "SEE_LOBBY" });
+  }, []);
 
   return (
     <>
       {props.lobbies.map((lobby) => (
-        <div className="lobbys" key={lobby.lobbyId}>
-          Lobby {lobby.lobbyName}{" "}
-          <button
-            onClick={(e) => {
-              socket.emit("message", {
-                type: "JOIN_LOBBY",
-                lobbyId: lobby.lobbyId,
-                password: joinPassword,
-              });
-            }}
-          >
-            Join Lobby
-          </button>
-          {lobby.password && (
-            <>
-              <label>Enter Password</label>
-              <input
-                value={joinPassword}
-                onInput={(e) => {
-                  setJoinPassword(e.target.value);
-                }}
-              ></input>
-            </>
-          )}
-        </div>
+        <LobbyEntry lobby={lobby} key={lobby.lobbyId} />
       ))}
       New lobby name:{" "}
       <input
         value={newLobbyName}
-        onInput={(e) => {
-          setNewLobbyName(e.target.value);
-        }}
-      ></input>
+        onInput={(e) => setNewLobbyName(e.target.value)}
+      />
       New lobby password:{" "}
       <input
         value={newLobbyPassword}
-        onInput={(e) => {
-          setNewLobbyPassword(e.target.value);
-        }}
-      ></input>
+        onInput={(e) => setNewLobbyPassword(e.target.value)}
+      />
       <button
-        onClick={(e) => {
+        onClick={() => {
           socket.emit("message", {
             type: "NEW_LOBBY",
             lobbyName: newLobbyName,
@@ -154,23 +130,58 @@ function Lobbies(props) {
   );
 }
 
+function LobbyEntry({ lobby }) {
+  const [password, setPassword] = useState("");
+  return (
+    <div className="lobbys" key={lobby.lobbyId}>
+      Lobby {lobby.lobbyName}{" "}
+      <button
+        onClick={(e) => {
+          socket.emit("message", {
+            type: "JOIN_LOBBY",
+            lobbyId: lobby.lobbyId,
+            password,
+          });
+        }}
+      >
+        Join Lobby
+      </button>
+      {lobby.password && (
+        <>
+          <label>Enter Password</label>
+          <input
+            value={password}
+            onInput={(e) => {
+              setPassword(e.target.value);
+            }}
+          ></input>
+        </>
+      )}
+    </div>
+  );
+}
+
 function LobbyView({ lobbyName, playerList, winner, lobbyId }) {
   return (
     <div>
       <h4 className="lobby-welcome">Welcome to lobby {lobbyName}!</h4>
       <br />
-      {winner && (
-        <p>
-          <i>
-            <b>{playerList.find((player) => player.id === winner).name}</b>
-          </i>
-          , you're winner!
-        </p>
+      {winner.length > 0 && (
+        <div className="weiner">
+          <h2>WINNERS!!!! YOU WON GOOD JOBYOU WON GOOD JOBYOU WON GOOD JOB</h2>
+          {winner.map((id) => (
+            <i key={id}>
+              <b className="weiners">
+                {playerList.find((player) => player.id === id).name}
+              </b>
+            </i>
+          ))}
+        </div>
       )}
-      <b>Player List</b>
+      <b className="player-list-txt">Player List</b>
       {playerList.map((player) => (
         <div key={player.id}>
-          <label>{player.name}</label>
+          <label className="players">{player.name}</label>
         </div>
       ))}
       <br></br>
