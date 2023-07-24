@@ -34,7 +34,7 @@ let lobbyId = 0;
 
 const getOptions = () => {
   const options = [];
-  for (let i = 0; i < 3; ++i) {
+  for (let i = 0; i < 5; ++i) {
     options.push(words[Math.floor(Math.random() * words.length)]);
   }
   return options;

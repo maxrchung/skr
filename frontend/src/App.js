@@ -158,18 +158,20 @@ function LobbyView({ lobbyName, playerList, winner, lobbyId }) {
       <h4>Welcome to lobby {lobbyName}!</h4>
       <br />
       {winner.length > 0 && (
-        <>
-          <h5>you're winner(s)!</h5>
+        <fieldset>
+          <legend>
+            WINNERS!!!! YOU WON GOOD JOBYOU WON GOOD JOBYOU WON GOOD JOB
+          </legend>
           <ul>
             {winner.map((id) => (
-              <li title={id}>
+              <li key={id}>
                 <i>
                   <b>{playerList.find((player) => player.id === id).name}</b>
                 </i>
               </li>
             ))}
           </ul>
-        </>
+        </fieldset>
       )}
       <b>Player List</b>
       {playerList.map((player) => (
