@@ -51,7 +51,7 @@ const getNextDrawerId = async (lobbyId, oldDrawerId) => {
   } else {
     nextIndex = (currIndex + 1) % sockets.length;
   }
-  const nextDrawerId = sockets[nextIndex].id;
+  const nextDrawerId = sockets[nextIndex]?.id ?? 0; // ??? Maybe some weird cleanup crap causing error
   return nextDrawerId;
 };
 
@@ -60,6 +60,8 @@ const leaveLobby = async (socket) => {
     const sockets = await io.in(lobbyId).fetchSockets();
 
     if (sockets.length === 1) {
+      // Make sure we don't trigger timeout later
+      clearTimeout(lobbies[lobbyId].timeoutId);
       delete lobbies[lobbyId];
     } else {
       const playerList = sockets

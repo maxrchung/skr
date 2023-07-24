@@ -1,10 +1,104 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Canvas from "../Canvas";
 import { socket } from "../socket";
+
+const alphaNum = /^[a-z0-9]+$/i;
 
 export default function PlayStep({ drawerId, gameWord, isCorrect, lobbyId }) {
   const [value, setValue] = useState("");
   const [error, setError] = useState(false);
+
+  const [hintIndex1, setHintIndex1] = useState(-1);
+  const [hintIndex2, setHintIndex2] = useState(-1);
+  const [hintIndex3, setHintIndex3] = useState(-1);
+  const [hintIndex4, setHintIndex4] = useState(-1);
+  const [hintIndex5, setHintIndex5] = useState(-1);
+  const [hintIndex6, setHintIndex6] = useState(-1);
+
+  // yolo
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (1 <= gameWord.length / 2) {
+        setHintIndex1(Math.floor(Math.random() * gameWord.length));
+      }
+    }, 10 * 1000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [gameWord.length]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (2 <= gameWord.length / 2) {
+        setHintIndex2(Math.floor(Math.random() * gameWord.length));
+      }
+    }, 20 * 1000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [gameWord.length]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (3 <= gameWord.length / 2) {
+        setHintIndex3(Math.floor(Math.random() * gameWord.length));
+      }
+    }, 30 * 1000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [gameWord.length]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (4 <= gameWord.length / 2) {
+        setHintIndex4(Math.floor(Math.random() * gameWord.length));
+      }
+    }, 40 * 1000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [gameWord.length]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (5 <= gameWord.length / 2) {
+        setHintIndex5(Math.floor(Math.random() * gameWord.length));
+      }
+    }, 50 * 1000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [gameWord.length]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (6 <= gameWord.length / 2) {
+        setHintIndex6(Math.floor(Math.random() * gameWord.length));
+      }
+    }, 55 * 1000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [gameWord.length]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (5 <= gameWord.length / 2) {
+        setHintIndex5(Math.floor(Math.random() * gameWord.length));
+      }
+    }, 50 * 1000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [gameWord.length]);
 
   if (drawerId === socket.id) {
     return (
@@ -17,6 +111,24 @@ export default function PlayStep({ drawerId, gameWord, isCorrect, lobbyId }) {
     );
   }
 
+  let hint = [];
+  for (let i = 0; i < gameWord.length; ++i) {
+    const char = gameWord[i];
+    if (
+      char.match(alphaNum) &&
+      i !== hintIndex1 &&
+      i !== hintIndex2 &&
+      i !== hintIndex3 &&
+      i !== hintIndex4 &&
+      i !== hintIndex5 &&
+      i !== hintIndex6
+    ) {
+      hint.push("_");
+    } else {
+      hint.push(char);
+    }
+  }
+
   return (
     <>
       {isCorrect ? (
@@ -24,6 +136,13 @@ export default function PlayStep({ drawerId, gameWord, isCorrect, lobbyId }) {
       ) : (
         <div className="submit-btn">
           <p>Guess the word...</p>
+          <p>
+            {hint.map((char, index) => (
+              <span key={index} className="hint">
+                {char}
+              </span>
+            ))}
+          </p>
           <input
             value={value}
             onChange={(event) => setValue(event.target.value)}
