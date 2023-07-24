@@ -14,6 +14,7 @@ export default function PlayStep({ drawerId, gameWord, isCorrect, lobbyId }) {
   const [hintIndex4, setHintIndex4] = useState(-1);
   const [hintIndex5, setHintIndex5] = useState(-1);
   const [hintIndex6, setHintIndex6] = useState(-1);
+  const [hintIndex7, setHintIndex7] = useState(-1);
 
   // yolo
   useEffect(() => {
@@ -69,7 +70,7 @@ export default function PlayStep({ drawerId, gameWord, isCorrect, lobbyId }) {
       if (5 <= gameWord.length / 2) {
         setHintIndex5(Math.floor(Math.random() * gameWord.length));
       }
-    }, 50 * 1000);
+    }, 45 * 1000);
 
     return () => {
       clearTimeout(timeout);
@@ -81,7 +82,7 @@ export default function PlayStep({ drawerId, gameWord, isCorrect, lobbyId }) {
       if (6 <= gameWord.length / 2) {
         setHintIndex6(Math.floor(Math.random() * gameWord.length));
       }
-    }, 55 * 1000);
+    }, 50 * 1000);
 
     return () => {
       clearTimeout(timeout);
@@ -90,10 +91,10 @@ export default function PlayStep({ drawerId, gameWord, isCorrect, lobbyId }) {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (5 <= gameWord.length / 2) {
-        setHintIndex5(Math.floor(Math.random() * gameWord.length));
+      if (7 <= gameWord.length / 2) {
+        setHintIndex7(Math.floor(Math.random() * gameWord.length));
       }
-    }, 50 * 1000);
+    }, 55 * 1000);
 
     return () => {
       clearTimeout(timeout);
@@ -121,7 +122,8 @@ export default function PlayStep({ drawerId, gameWord, isCorrect, lobbyId }) {
       i !== hintIndex3 &&
       i !== hintIndex4 &&
       i !== hintIndex5 &&
-      i !== hintIndex6
+      i !== hintIndex6 &&
+      i !== hintIndex7
     ) {
       hint.push("_");
     } else {
