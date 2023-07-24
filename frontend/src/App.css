@@ -1,3 +1,26 @@
+.word-button {
+  font-size: 1.5vw;
+  vertical-align: bottom;
+  padding: 0.727vh;
+  margin-bottom: 1vh;
+}
+
+.picking-name-txt {
+  font-size: 1.5vh;
+}
+
+.draw-word-txt {
+  font-size: 1.35vh;
+}
+
+.timer {
+  font-size: 1.5vh;
+}
+
+.word-pick {
+  font-size: 2vh;
+}
+
 .player-scores {
   font-size: 3vh;
 }

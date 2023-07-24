@@ -48,7 +48,7 @@ export default function GamePhase({
         />
       ) : (
         <>
-          <p>
+          <p className="timer">
             Time remaining: <strong>{remaining < 0 ? 0 : remaining}</strong>
           </p>
           <PlayStep

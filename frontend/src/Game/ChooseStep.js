@@ -4,27 +4,31 @@ export default function ChooseStep({ drawerId, options, playerList, lobbyId }) {
   if (drawerId === socket.id) {
     return (
       <>
-        <p>Pick a word</p>
+        <p className="word-pick">Pick a word</p>
         {options.map((option) => (
-          <button
-            key={option}
-            onClick={() => {
-              socket.emit("message", {
-                type: "CHOOSE_WORD",
-                option,
-                drawerId,
-                lobbyId,
-              });
-            }}
-          >
-            {option}
-          </button>
+          <>
+            <button
+              className="word-button"
+              key={option}
+              onClick={() => {
+                socket.emit("message", {
+                  type: "CHOOSE_WORD",
+                  option,
+                  drawerId,
+                  lobbyId,
+                });
+              }}
+            >
+              {option}
+            </button>
+            <div />
+          </>
         ))}
       </>
     );
   } else {
     return (
-      <p>
+      <p className="picking-name-txt">
         {playerList.find((player) => player.id === drawerId).name} is currently
         picking...
       </p>

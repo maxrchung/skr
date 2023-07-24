@@ -9,7 +9,7 @@ export default function PlayStep({ drawerId, gameWord, isCorrect, lobbyId }) {
   if (drawerId === socket.id) {
     return (
       <>
-        <p>
+        <p className="draw-word-txt">
           Yo this is your word you need to draw: <strong>{gameWord}</strong>
         </p>
         <Canvas drawerId={drawerId} />
