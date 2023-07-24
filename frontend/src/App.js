@@ -123,7 +123,7 @@ function Lobbies(props) {
             socket.emit("message", { type: "SEE_LOBBY" });
           }}
         >
-          See Lobbies
+          Refresh Lobbies
         </button>
       </div>
     </>

@@ -109,7 +109,6 @@ export default function SocketStuff() {
           setIsCorrect(false);
           setDrawerId(message.drawerId);
           setOptions(message.options);
-          setGameWord("");
           setGameStep("CHOOSE");
           setPlayerList(message.playerList);
           break;
