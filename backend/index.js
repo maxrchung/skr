@@ -96,6 +96,7 @@ io.on("connection", (socket) => {
         break;
 
       case "SEE_LOBBY":
+        console.log(lobbies);
         socket.emit("message", {
           type: "SEE_LOBBY",
           lobbies: Object.values(lobbies),
@@ -231,7 +232,8 @@ io.on("connection", (socket) => {
           }
         }, 1000 * 60);
 
-        lobbies[message.lobbyId].timeoutId = timeoutId;
+        // Convert timeout from object to number
+        lobbies[message.lobbyId].timeoutId = +timeoutId;
         break;
       }
 

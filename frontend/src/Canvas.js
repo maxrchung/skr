@@ -98,26 +98,20 @@ export default function Canvas({ drawerId }) {
 
     const onMouseDown = (e) => {
       isDrawing = true;
-      position.x = e.offsetX || e.touches[0].offsetX;
-      position.y = e.offsetY || e.touches[0].offsetY;
+      position.x = e.offsetX;
+      position.y = e.offsetYY;
       emitDraw(e.offsetX, e.offsetY);
     };
 
     const onMouseMove = (e) => {
-      emitCursor(
-        e.offsetX || e.touches[0].offsetX,
-        e.offsetY || e.touches[0].offsetY
-      );
+      emitCursor(e.offsetX, e.offsetY);
 
       if (isDrawing) {
-        emitDraw(
-          e.offsetX || e.touches[0].offsetX,
-          e.offsetY || e.touches[0].offsetY
-        );
+        emitDraw(e.offsetX, e.offsetY);
       }
 
-      position.x = e.offsetX || e.touches[0].offsetX;
-      position.y = e.offsetY || e.touches[0].offsetY;
+      position.x = e.offsetX;
+      position.y = e.offsetY;
     };
 
     const onMouseUp = (e) => {
@@ -125,22 +119,13 @@ export default function Canvas({ drawerId }) {
         return;
       }
       isDrawing = false;
-      emitDraw(
-        e.offsetX || e.touches[0].offsetX,
-        e.offsetY || e.touches[0].offsetY
-      );
+      emitDraw(e.offsetX, e.offsetY);
     };
 
     cursor.addEventListener("mousedown", onMouseDown);
     cursor.addEventListener("mouseup", onMouseUp);
     cursor.addEventListener("mouseout", onMouseUp);
     cursor.addEventListener("mousemove", throttle(onMouseMove, 10));
-
-    // Touch support for mobile devices
-    cursor.addEventListener("touchstart", onMouseDown);
-    cursor.addEventListener("touchend", onMouseUp);
-    cursor.addEventListener("touchcancel", onMouseUp);
-    cursor.addEventListener("touchmove", throttle(onMouseMove, 10));
 
     const onDrawEvent = (message) => {
       // Conditional check so logs aren't slammed too hard
