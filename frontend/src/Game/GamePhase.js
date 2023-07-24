@@ -27,7 +27,10 @@ export default function GamePhase({
 
   return (
     <>
-      <button onClick={() => socket.emit("message", { type: "LEAVE_LOBBY" })}>
+      <button
+        className="quitter"
+        onClick={() => socket.emit("message", { type: "LEAVE_LOBBY" })}
+      >
         Leave the lobby...
       </button>
 

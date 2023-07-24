@@ -22,7 +22,7 @@ export default function PlayStep({ drawerId, gameWord, isCorrect, lobbyId }) {
       {isCorrect ? (
         <h4>Nice. You got the answer. Good job.</h4>
       ) : (
-        <>
+        <div className="submit-btn">
           <p>Guess the word...</p>
           <input
             value={value}
@@ -50,7 +50,7 @@ export default function PlayStep({ drawerId, gameWord, isCorrect, lobbyId }) {
             Submit
           </button>
           {error && <h1>Wrong answer, try again</h1>}
-        </>
+        </div>
       )}
 
       <Canvas drawerId={drawerId} />

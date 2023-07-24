@@ -1,3 +1,11 @@
+.submit-btn {
+  margin-bottom: 1.35vh;
+}
+
+.quitter {
+  margin-top: 2vh;
+}
+
 .word-button {
   font-size: 1.5vw;
   vertical-align: bottom;

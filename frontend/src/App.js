@@ -164,7 +164,10 @@ function LobbyEntry({ lobby }) {
 function LobbyView({ lobbyName, playerList, winner, lobbyId }) {
   return (
     <div>
-      <button onClick={() => socket.emit("message", { type: "LEAVE_LOBBY" })}>
+      <button
+        className="quitter"
+        onClick={() => socket.emit("message", { type: "LEAVE_LOBBY" })}
+      >
         Leave the lobby...
       </button>
       <h4 className="lobby-welcome">Welcome to lobby {lobbyName}!</h4>
