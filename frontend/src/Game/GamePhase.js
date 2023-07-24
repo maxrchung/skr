@@ -34,7 +34,7 @@ export default function GamePhase({
         Leave the lobby...
       </button>
 
-      <h2>First 5 points to win!!! Goo luckk!</h2>
+      <h2>First to 5 points to win!!! Goo luckk!</h2>
       {playerList.map((player) => (
         <div className="player-scores" key={player.id}>
           {player.name}: {player.score || 0}
