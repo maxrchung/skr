@@ -161,7 +161,7 @@ io.on("connection", (socket) => {
         break;
       }
 
-      case "CHOOSE_WORD":
+      case "CHOOSE_WORD": {
         io.to(message.lobbyId).emit("message", {
           type: "CHOOSE_WORD",
           option: message.option,
@@ -175,34 +175,33 @@ io.on("connection", (socket) => {
             message.drawerId
           );
 
-          (await io.in(message.lobbyId).fetchSockets()).forEach(
-            (socket) => (socket.data.hasScored = false)
-          );
+          const sockets = await io.in(message.lobbyId).fetchSockets();
+          sockets.forEach((socket) => (socket.data.hasScored = false));
 
           if (socket.data.score === 5) {
+            const winnerIds = sockets
+              .filter((socket) => socket.data.score >= 5)
+              .map((socket) => socket.id);
             sockets.forEach((socket) => (socket.data.score = 0));
 
             io.to(message.lobbyId).emit("message", {
               type: "END_GAME",
-              winnerId: socket.id,
-              playerList: (await io.in(message.lobbyId).fetchSockets()).map(
-                (socket) => socket.data
-              ),
+              winnerIds,
+              playerList: sockets.map((socket) => socket.data),
             });
           } else {
             io.to(message.lobbyId).emit("message", {
               type: "RESET_ROUND",
               drawerId: nextDrawerId,
               options,
-              playerList: (await io.in(message.lobbyId).fetchSockets()).map(
-                (socket) => socket.data
-              ),
+              playerList: sockets.map((socket) => socket.data),
             });
           }
         }, 1000 * 60);
 
         lobbies[message.lobbyId].timeoutId = timeoutId;
         break;
+      }
 
       case "GOT_ANSWER": {
         if (socket.data.score) {
@@ -219,6 +218,9 @@ io.on("connection", (socket) => {
 
         // === 1 to ignore drawer
         if (notScored.length === 1) {
+          // Make sure we don't trigger timeout later
+          clearTimeout(lobbies[message.lobbyId].timeoutId);
+
           const options = getOptions();
           const nextDrawerId = await getNextDrawerId(
             message.lobbyId,
@@ -228,27 +230,23 @@ io.on("connection", (socket) => {
           const sockets = await io.in(message.lobbyId).fetchSockets();
           sockets.forEach((socket) => (socket.data.hasScored = false));
 
-          // Make sure we don't trigger timeout later
-          clearTimeout(lobbies[message.lobbyId].timeoutId);
-
           if (socket.data.score === 5) {
+            const winnerIds = sockets
+              .filter((socket) => socket.data.score >= 5)
+              .map((socket) => socket.id);
             sockets.forEach((socket) => (socket.data.score = 0));
 
             io.to(message.lobbyId).emit("message", {
               type: "END_GAME",
-              winnerId: socket.id,
-              playerList: (await io.in(message.lobbyId).fetchSockets()).map(
-                (socket) => socket.data
-              ),
+              winnerIds,
+              playerList: sockets.map((socket) => socket.data),
             });
           } else {
             io.to(message.lobbyId).emit("message", {
               type: "RESET_ROUND",
               drawerId: nextDrawerId,
               options,
-              playerList: (await io.in(message.lobbyId).fetchSockets()).map(
-                (socket) => socket.data
-              ),
+              playerList: sockets.map((socket) => socket.data),
             });
           }
         } else {
