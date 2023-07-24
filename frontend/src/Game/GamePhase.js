@@ -48,6 +48,7 @@ export default function GamePhase({
           options={options}
           playerList={playerList}
           lobbyId={lobbyId}
+          gameWord={gameWord}
         />
       ) : (
         <>
