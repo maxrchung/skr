@@ -255,7 +255,7 @@ io.on("connection", (socket) => {
         // === 1 to ignore drawer
         if (notScored.length === 1) {
           // Make sure we don't trigger timeout later
-          clearTimeout(lobbies[message.lobbyId].timeoutId);
+          clearTimeout(lobbies[message.lobbyId]?.timeoutId);
 
           const options = getOptions();
           const nextDrawerId = await getNextDrawerId(
