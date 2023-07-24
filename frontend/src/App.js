@@ -23,6 +23,7 @@ function App({
     // render something
     return (
       <div className="skr-name">
+        <h1>SKR</h1>
         <p>hey you need to enter a name broski</p>
         <NameInput />
       </div>
