@@ -32,7 +32,11 @@ export default function PlayStep({ drawerId, gameWord, isCorrect, lobbyId }) {
             onClick={() => {
               setValue("");
 
-              if (value !== gameWord) {
+              const laxGameWord = gameWord.replace(/[^a-z0-9]/gi, "");
+              const laxValue = value.replace(/[^a-z0-9]/gi, "");
+              const isMatch = laxGameWord === laxValue;
+
+              if (!isMatch) {
                 setError(true);
               } else {
                 socket.emit("message", {
