@@ -83,53 +83,24 @@ function NameInput() {
 function Lobbies(props) {
   const [newLobbyName, setNewLobbyName] = useState("");
   const [newLobbyPassword, setNewLobbyPassword] = useState("");
-  const [joinPassword, setJoinPassword] = useState("");
 
   return (
     <>
       {props.lobbies.map((lobby) => (
-        <div key={lobby.lobbyId}>
-          Lobby {lobby.lobbyName}{" "}
-          <button
-            onClick={(e) => {
-              socket.emit("message", {
-                type: "JOIN_LOBBY",
-                lobbyId: lobby.lobbyId,
-                password: joinPassword,
-              });
-            }}
-          >
-            Join Lobby
-          </button>
-          {lobby.password && (
-            <>
-              <label>Enter Password</label>
-              <input
-                value={joinPassword}
-                onInput={(e) => {
-                  setJoinPassword(e.target.value);
-                }}
-              ></input>
-            </>
-          )}
-        </div>
+        <LobbyEntry lobby={lobby} key={lobby.lobbyId} />
       ))}
       New lobby name:{" "}
       <input
         value={newLobbyName}
-        onInput={(e) => {
-          setNewLobbyName(e.target.value);
-        }}
-      ></input>
+        onInput={(e) => setNewLobbyName(e.target.value)}
+      />
       New lobby password:{" "}
       <input
         value={newLobbyPassword}
-        onInput={(e) => {
-          setNewLobbyPassword(e.target.value);
-        }}
-      ></input>
+        onInput={(e) => setNewLobbyPassword(e.target.value)}
+      />
       <button
-        onClick={(e) => {
+        onClick={() => {
           socket.emit("message", {
             type: "NEW_LOBBY",
             lobbyName: newLobbyName,
@@ -149,6 +120,37 @@ function Lobbies(props) {
         </button>
       </div>
     </>
+  );
+}
+
+function LobbyEntry({ lobby }) {
+  const [password, setPassword] = useState("");
+  return (
+    <div key={lobby.lobbyId}>
+      Lobby {lobby.lobbyName}{" "}
+      <button
+        onClick={(e) => {
+          socket.emit("message", {
+            type: "JOIN_LOBBY",
+            lobbyId: lobby.lobbyId,
+            password,
+          });
+        }}
+      >
+        Join Lobby
+      </button>
+      {lobby.password && (
+        <>
+          <label>Enter Password</label>
+          <input
+            value={password}
+            onInput={(e) => {
+              setPassword(e.target.value);
+            }}
+          ></input>
+        </>
+      )}
+    </div>
   );
 }
 
