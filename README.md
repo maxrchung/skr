@@ -1,5 +1,10 @@
 # skr
 
+<img width="1840" alt="image" src="https://github.com/maxrchung/skr/assets/3955187/5075ab8b-9fae-4d04-aa4c-2d2540415746">
+
+<img width="1840" alt="image" src="https://github.com/maxrchung/skr/assets/3955187/27ee1e34-d185-46ba-ac77-4adfc78203a8">
+
+
 This is like a skribblio clone. Made over a weekend jam with React, HTML Canvas, and socket.io. By the way this only works on desktop, mobile is gonna have a bad time sorry.
 
 ## Prerequisites
