@@ -54,9 +54,20 @@ export default function SocketStuff() {
 
         case "JOIN_LOBBY":
           setPlayerList(message.playerList);
-          setLobbyId(message.lobbyId);
-          setLobbyName(message.lobbyName);
-          setPhase("IN_LOBBY");
+          setLobbyId(message.lobby.lobbyId);
+          setLobbyName(message.lobby.lobbyName);
+          if (message.lobby.isPlaying) {
+            setPhase("GAME");
+            setGameStep("WAIT");
+          } else {
+            setPhase("IN_LOBBY");
+          }
+          setWinner([]);
+          break;
+
+        case "LEAVE_LOBBY":
+          setPhase("OUT_LOBBY");
+          setLobbies(message.lobbies);
           break;
 
         case "PLAYER_LIST_UPDATED":

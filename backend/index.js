@@ -25,7 +25,8 @@ const io = new Server(4000, {
     lobbyId,
     lobbyName,
     password,
-    timeOutId
+    timeOutId,
+    isPlaying
   }
 }
 */
@@ -54,29 +55,32 @@ const getNextDrawerId = async (lobbyId, oldDrawerId) => {
   return nextDrawerId;
 };
 
+const leaveLobby = async (socket) => {
+  [...socket.rooms].forEach(async (lobbyId) => {
+    const sockets = await io.in(lobbyId).fetchSockets();
+
+    if (sockets.length === 1) {
+      delete lobbies[lobbyId];
+    } else {
+      const playerList = sockets
+        .filter((player) => player.id !== socket.id)
+        .map((socket) => socket.data);
+
+      io.in(lobbyId).emit("message", {
+        type: "PLAYER_LIST_UPDATED",
+        playerList,
+      });
+    }
+  });
+};
+
 io.on("connection", (socket) => {
   console.log("Connected: " + socket.id);
   socket.data.id = socket.id; // for convenience
 
-  socket.on("disconnecting", () => {
+  socket.on("disconnecting", async () => {
     console.log("Disconnecting: " + socket.id);
-
-    [...socket.rooms].forEach(async (lobbyId) => {
-      const sockets = await io.in(lobbyId).fetchSockets();
-
-      if (sockets.length === 1) {
-        delete lobbies[lobbyId];
-      } else {
-        const playerList = sockets
-          .filter((player) => player.id !== socket.id)
-          .map((socket) => socket.data);
-
-        io.in(lobbyId).emit("message", {
-          type: "PLAYER_LIST_UPDATED",
-          playerList,
-        });
-      }
-    });
+    await leaveLobby(socket);
   });
 
   socket.on("message", async (message) => {
@@ -103,6 +107,7 @@ io.on("connection", (socket) => {
           lobbyId,
           lobbyName: message.lobbyName,
           password: message.password,
+          isPlaying: false,
         };
 
         socket.join(lobbyId);
@@ -130,8 +135,7 @@ io.on("connection", (socket) => {
           socket.emit("message", {
             type: "JOIN_LOBBY",
             playerList,
-            lobbyName: lobbies[message.lobbyId].lobbyName,
-            lobbyId: message.lobbyId,
+            lobby: lobbies[message.lobbyId],
           });
 
           io.to(message.lobbyId).emit("message", {
@@ -143,6 +147,11 @@ io.on("connection", (socket) => {
       }
 
       case "LEAVE_LOBBY":
+        await leaveLobby(socket);
+        socket.emit("message", {
+          type: "LEAVE_LOBBY",
+          lobbies: Object.values(lobbies),
+        });
         break;
 
       case "START_GAME":
@@ -155,6 +164,8 @@ io.on("connection", (socket) => {
         (await io.in(message.lobbyId).fetchSockets()).forEach(
           (socket) => (socket.data.hasScored = false)
         );
+
+        lobbies[message.lobbyId].isPlaying = true;
 
         io.to(message.lobbyId).emit("message", {
           type: "START_GAME",
@@ -204,6 +215,7 @@ io.on("connection", (socket) => {
               .map((socket) => socket.id);
             sockets.forEach((socket) => (socket.data.score = 0));
 
+            lobbies[message.lobbyId].isPlaying = false;
             io.to(message.lobbyId).emit("message", {
               type: "END_GAME",
               winnerIds,
@@ -256,6 +268,7 @@ io.on("connection", (socket) => {
               .map((socket) => socket.id);
             sockets.forEach((socket) => (socket.data.score = 0));
 
+            lobbies[message.lobbyId].isPlaying = false;
             io.to(message.lobbyId).emit("message", {
               type: "END_GAME",
               winnerIds,
