@@ -5,8 +5,8 @@ export default function ChooseStep({ drawerId, options, playerList, lobbyId }) {
     return (
       <>
         <p className="word-pick">Pick a word</p>
-        {options.map((option) => (
-          <>
+        {options.map((option, index) => (
+          <div key={index}>
             <button
               className="word-button"
               key={option}
@@ -21,8 +21,7 @@ export default function ChooseStep({ drawerId, options, playerList, lobbyId }) {
             >
               {option}
             </button>
-            <div />
-          </>
+          </div>
         ))}
       </>
     );
