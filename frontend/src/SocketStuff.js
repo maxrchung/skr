@@ -128,32 +128,11 @@ export default function SocketStuff() {
 
   return (
     <>
-      <div>You are currently: {connected ? "Connected" : "Disconnected"}</div>
-      <div>You are ID: {socket.id}</div>
-      <div>You're name: {name}</div>
-      <button
-        onClick={() => {
-          socket.emit("message", "hi");
-        }}
-      >
-        hi
-      </button>
-      <button onClick={() => setPhase("NAME_PHASE")}>Set name phase</button>
-      <button onClick={() => setPhase("OUT_LOBBY")}>Set out lobby phase</button>
-      <button onClick={() => setPhase("IN_LOBBY")}>Set in lobby phase</button>
-      <button onClick={() => setPhase("GAME")}>Set game phase</button>
-
-      <button onClick={() => setGameStep("CHOOSE")}>Set game ChooseStep</button>
-      <button onClick={() => setGameStep("PLAY")}>Set game PlayStep</button>
-      <button
-        onClick={() => socket.emit("message", { type: "MAKE_ME_DRAWER" })}
-      >
-        Make me drawer
-      </button>
-
-      <button onClick={() => socket.emit("message", { type: "GET_WORDS" })}>
-        Get words
-      </button>
+      <div className="top1">
+        You are currently: {connected ? "Connected" : "Disconnected"}
+      </div>
+      <div className="top2">You are ID: {socket.id}</div>
+      <div className="top3">You're name: {name}</div>
 
       <App
         name={name}

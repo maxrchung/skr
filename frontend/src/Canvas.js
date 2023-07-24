@@ -182,8 +182,10 @@ export default function Canvas({ drawerId }) {
 
   return (
     <div className="skr-draw">
-      <canvas className="display" ref={displayRef} width="666" height="666" />
-      <canvas className="cursor" ref={cursorRef} width="666" height="666" />
+      <div>
+        <canvas className="display" ref={displayRef} width="666" height="666" />
+        <canvas className="cursor" ref={cursorRef} width="666" height="666" />
+      </div>
 
       {drawerId === socket.id && (
         <div>

@@ -23,9 +23,10 @@ function App({
     // render something
     return (
       <div className="skr-name">
-        <h1>SKR</h1>
-        <p>hey you need to enter a name broski</p>
+        <h1 className="SKR">SKR</h1>
+        <p className="hellosu">hey you need to enter a name broski</p>
         <NameInput />
+        <p className="我很喜歡冰淇淋">我很喜歡冰淇淋</p>
       </div>
     );
   } else if (phase === "OUT_LOBBY") {
@@ -70,6 +71,7 @@ function NameInput() {
         }}
       />
       <button
+        className="name-button"
         onClick={(e) => {
           socket.emit("message", { type: "SET_NAME", value });
         }}
@@ -88,7 +90,7 @@ function Lobbies(props) {
   return (
     <>
       {props.lobbies.map((lobby) => (
-        <div key={lobby.lobbyId}>
+        <div className="lobbys" key={lobby.lobbyId}>
           Lobby {lobby.lobbyName}{" "}
           <button
             onClick={(e) => {
@@ -155,7 +157,7 @@ function Lobbies(props) {
 function LobbyView({ lobbyName, playerList, winner, lobbyId }) {
   return (
     <div>
-      <h4>Welcome to lobby {lobbyName}!</h4>
+      <h4 className="lobby-welcome">Welcome to lobby {lobbyName}!</h4>
       <br />
       {winner && (
         <p>
