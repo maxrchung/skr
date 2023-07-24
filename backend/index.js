@@ -58,8 +58,25 @@ io.on("connection", (socket) => {
   console.log("Connected: " + socket.id);
   socket.data.id = socket.id; // for convenience
 
-  socket.on("disconnect", () => {
-    console.log("Disconnected: " + socket.id);
+  socket.on("disconnecting", () => {
+    console.log("Disconnecting: " + socket.id);
+
+    [...socket.rooms].forEach(async (lobbyId) => {
+      const sockets = await io.in(lobbyId).fetchSockets();
+
+      if (sockets.length === 1) {
+        delete lobbies[lobbyId];
+      } else {
+        const playerList = sockets
+          .filter((player) => player.id !== socket.id)
+          .map((socket) => socket.data);
+
+        io.in(lobbyId).emit("message", {
+          type: "PLAYER_LIST_UPDATED",
+          playerList,
+        });
+      }
+    });
   });
 
   socket.on("message", async (message) => {
@@ -118,12 +135,15 @@ io.on("connection", (socket) => {
           });
 
           io.to(message.lobbyId).emit("message", {
-            type: "PLAYER_JOINED",
+            type: "PLAYER_LIST_UPDATED",
             playerList,
           });
         }
         break;
       }
+
+      case "LEAVE_LOBBY":
+        break;
 
       case "START_GAME":
         const options = getOptions();
