@@ -11,7 +11,7 @@ export default function ChooseStep({
     return (
       <>
         {gameWord && (
-          <h3 className="last-word-txt">LAST WORD WAS {gameWord}!</h3>
+          <h3 className="last-word-txt">LAST WORD WAS {gameWord}</h3>
         )}
         <p className="word-pick">Pick a word</p>
         {options.map((option, index) => (
