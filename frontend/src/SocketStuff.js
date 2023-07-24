@@ -59,7 +59,7 @@ export default function SocketStuff() {
           setPhase("IN_LOBBY");
           break;
 
-        case "PLAYER_JOINED":
+        case "PLAYER_LIST_UPDATED":
           setPlayerList(message.playerList);
           break;
 
