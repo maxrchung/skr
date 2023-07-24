@@ -29,7 +29,7 @@ export default function ChooseStep({ drawerId, options, playerList, lobbyId }) {
   } else {
     return (
       <p className="picking-name-txt">
-        {playerList.find((player) => player.id === drawerId).name} is currently
+        {playerList.find((player) => player.id === drawerId)?.name} is currently
         picking...
       </p>
     );
