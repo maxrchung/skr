@@ -264,9 +264,9 @@ io.on("connection", (socket) => {
           const sockets = await io.in(message.lobbyId).fetchSockets();
           sockets.forEach((socket) => (socket.data.hasScored = false));
 
-          if (socket.data.score === 1) {
+          if (socket.data.score === 5) {
             const winnerIds = sockets
-              .filter((socket) => socket.data.score >= 1)
+              .filter((socket) => socket.data.score >= 5)
               .map((socket) => socket.id);
             sockets.forEach((socket) => (socket.data.score = 0));
 
