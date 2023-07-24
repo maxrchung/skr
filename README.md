@@ -1,6 +1,6 @@
 # skr
 
-This is like a skribblio clone. Made over a weekend jam with React, HTML Canvas, and socket.io.
+This is like a skribblio clone. Made over a weekend jam with React, HTML Canvas, and socket.io. By the way this only works on desktop, mobile is gonna have a bad time sorry.
 
 ## Prerequisites
 
