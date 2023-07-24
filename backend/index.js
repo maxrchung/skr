@@ -98,7 +98,6 @@ io.on("connection", (socket) => {
         break;
 
       case "SEE_LOBBY":
-        console.log(lobbies);
         socket.emit("message", {
           type: "SEE_LOBBY",
           lobbies: Object.values(lobbies),
