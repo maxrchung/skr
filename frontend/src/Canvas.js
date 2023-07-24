@@ -162,9 +162,12 @@ export default function Canvas({ drawerId }) {
 
           if (drawColor === "white") {
             cursorCtx.strokeStyle = "black";
-            cursorCtx.lineWidth = 1;
-            cursorCtx.stroke();
+          } else {
+            cursorCtx.strokeStyle = "white";
           }
+
+          cursorCtx.lineWidth = 1;
+          cursorCtx.stroke();
           break;
         }
 
