@@ -5,7 +5,7 @@ import words from "./words/words.json" assert { type: "json" };
 
 const io = new Server(4000, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "*",
   },
 });
 

@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { socket } from "./socket";
 import GamePhase from "./Game/GamePhase";
 
@@ -83,6 +83,11 @@ function NameInput() {
 function Lobbies(props) {
   const [newLobbyName, setNewLobbyName] = useState("");
   const [newLobbyPassword, setNewLobbyPassword] = useState("");
+
+  // Load lobbies when this component initially loads
+  useEffect(() => {
+    socket.emit("message", { type: "SEE_LOBBY" });
+  }, []);
 
   return (
     <>
