@@ -119,23 +119,23 @@ body {
 
 .skr-draw {
   position: relative;
+}
 
-  .display {
-    border: 1px solid black;
-    background-color: white;
-  }
+.display {
+  border: 1px solid black;
+  background-color: white;
+}
 
-  .cursor {
-    position: absolute;
-    top: 0;
-    border: 1px solid black;
-    transform: translateX(-50%);
-    left: 50%;
-  }
+.cursor {
+  position: absolute;
+  top: 0;
+  border: 1px solid black;
+  transform: translateX(-50%);
+  left: 50%;
+}
 
-  .hide-cursor {
-    cursor: none;
-  }
+.hide-cursor {
+  cursor: none;
 }
 
 .App {
