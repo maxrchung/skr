@@ -176,24 +176,6 @@ io.on("connection", (socket) => {
         });
         break;
 
-      case "GET_WORDS": {
-        const options = getOptions();
-
-        io.emit("message", {
-          type: "GET_WORDS",
-          options,
-        });
-        break;
-      }
-
-      case "MAKE_ME_DRAWER": {
-        io.emit("message", {
-          type: "MAKE_ME_DRAWER",
-          drawerId: socket.id,
-        });
-        break;
-      }
-
       case "CHOOSE_WORD": {
         io.to(message.lobbyId).emit("message", {
           type: "CHOOSE_WORD",
@@ -310,15 +292,15 @@ io.on("connection", (socket) => {
 
     switch (message.type) {
       case "DRAW":
-        io.emit("draw", message);
+        io.to(message.lobbyId).emit("draw", message);
         break;
 
       case "CLEAR":
-        io.emit("draw", message);
+        io.to(message.lobbyId).emit("draw", message);
         break;
 
       case "CURSOR":
-        io.emit("draw", message);
+        io.to(message.lobbyId).emit("draw", message);
         break;
 
       default:

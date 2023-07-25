@@ -15,7 +15,7 @@ const throttle = (callback, delay) => {
   };
 };
 
-export default function Canvas({ drawerId }) {
+export default function Canvas({ drawerId, lobbyId }) {
   const displayRef = useRef(null);
   const cursorRef = useRef(null);
 
@@ -73,6 +73,7 @@ export default function Canvas({ drawerId }) {
               ? eraserSizeRef.current
               : brushSizeRef.current,
         },
+        lobbyId,
       });
     };
 
@@ -93,6 +94,7 @@ export default function Canvas({ drawerId }) {
               ? eraserSizeRef.current
               : brushSizeRef.current,
         },
+        lobbyId,
       });
     };
 
@@ -221,7 +223,9 @@ export default function Canvas({ drawerId }) {
             value={eraserSize}
           />
 
-          <button onClick={() => socket.emit("draw", { type: "CLEAR" })}>
+          <button
+            onClick={() => socket.emit("draw", { type: "CLEAR", lobbyId })}
+          >
             clear whole canvas!!!
           </button>
         </div>

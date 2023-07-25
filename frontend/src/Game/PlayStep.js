@@ -107,7 +107,7 @@ export default function PlayStep({ drawerId, gameWord, isCorrect, lobbyId }) {
         <p className="draw-word-txt">
           Yo this is your word you need to draw: <strong>{gameWord}</strong>
         </p>
-        <Canvas drawerId={drawerId} />
+        <Canvas drawerId={drawerId} lobbyId={lobbyId} />
       </>
     );
   }
@@ -174,7 +174,7 @@ export default function PlayStep({ drawerId, gameWord, isCorrect, lobbyId }) {
         </div>
       )}
 
-      <Canvas drawerId={drawerId} />
+      <Canvas drawerId={drawerId} lobbyId={lobbyId} />
     </>
   );
 }
