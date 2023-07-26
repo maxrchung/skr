@@ -38,7 +38,7 @@ export default function ChooseStep({
     return (
       <p className="picking-name-txt">
         {gameWord && (
-          <h3 className="last-word-txt">LAST WORD WAS {gameWord}!</h3>
+          <h3 className="last-word-txt">LAST WORD WAS {gameWord}</h3>
         )}
         {playerList.find((player) => player.id === drawerId)?.name} is currently
         picking...
