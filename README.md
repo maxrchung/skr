@@ -61,3 +61,7 @@ Running the server directly. You may have to forward port 4000 on your router if
 ```bash
 node index.js
 ```
+
+## Docker
+
+I'm dockerizing this and deploying to GCP Cloud Run. First, make sure to build the static site files to `frontend/build`. Then you can build the Docker image from the root. Note so that we only have 1 Docker image. The backend serves the static site through Express on 3000 and runs Socket.IO server on 4000.
