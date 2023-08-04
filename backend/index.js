@@ -2,6 +2,8 @@
 
 import { Server } from "socket.io";
 import words from "./words/words.json" assert { type: "json" };
+import express from "express";
+import path from "path";
 
 const io = new Server(4000, {
   cors: {
@@ -308,3 +310,12 @@ io.on("connection", (socket) => {
     }
   });
 });
+
+const app = express();
+app.use(express.static("../frontend/build"));
+
+app.get("/", function (req, res) {
+  res.sendFile("../frontend/build/index.html");
+});
+
+app.listen(3000);
