@@ -33,7 +33,9 @@ export default function SocketStuff() {
     }
 
     function onMessage(message) {
-      console.log("message", message);
+      if (!process.env.NODE_ENV === "production") {
+        console.log("message", message);
+      }
 
       switch (message.type) {
         case "SET_NAME":

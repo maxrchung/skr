@@ -41,6 +41,12 @@ npm install -g serve
 serve -s build
 ```
 
+The frontend is deployed with Firebase Hosting.
+
+```bash
+firebase deploy
+```
+
 ## Backend
 
 Installing packages.
@@ -62,6 +68,9 @@ Running the server directly. You may have to forward port 4000 on your router if
 node index.js
 ```
 
-## Deploy
+The backend is Dockerized and ran on Cloud Run.
 
-The backend is Dockerized and ran on Cloud Run. The frontend is deployed to Firebase Hosting.
+```bash
+docker build . -t maxrchung/skr
+docker push maxrchung/skr
+```
