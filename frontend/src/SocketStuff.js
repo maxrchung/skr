@@ -25,11 +25,15 @@ export default function SocketStuff() {
 
   useEffect(() => {
     function onConnect() {
+      console.log("connected");
       setConnected(true);
     }
 
     function onDisconnect() {
+      console.log("disconnected");
       setConnected(false);
+      setPhase("NAME_PHASE");
+      setName("");
     }
 
     function onMessage(message) {
