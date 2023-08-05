@@ -8,10 +8,10 @@ This is like a skribblio clone. Made over a weekend jam with React, HTML Canvas,
 
 ## Prerequisites
 
-You need node. I'm using 18.17.0.
+You need node. I'm using 18.16.0.
 
 - https://nodejs.org/en
-- https://nodejs.org/dist/v18.17.0/
+- https://nodejs.org/dist/v18.16.0/
 
 ## Frontend
 
@@ -62,6 +62,6 @@ Running the server directly. You may have to forward port 4000 on your router if
 node index.js
 ```
 
-## Docker
+## Deploy
 
-I'm dockerizing this and deploying to GCP Cloud Run. First, make sure to build the static site files to `frontend/build`. Then you can build the Docker image from the root. Note so that we only have 1 Docker image. The backend serves the static site through Express on 3000 and runs Socket.IO server on 4000.
+The backend is Dockerized and ran on Cloud Run. The frontend is deployed to Firebase Hosting.
