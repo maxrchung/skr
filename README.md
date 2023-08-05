@@ -1,10 +1,13 @@
 # skr
 
+Play: https://skr-project-dd5d6.web.app
+
+This is like a [skribbl.io](https://skribbl.io) clone made over a weekend jam with React, HTML Canvas, and socket.io. It only works with desktop web as we don't support touches for mobile. There are some [limitations with Cloud Run and WebSockets](https://cloud.google.com/run/docs/triggering/websockets#client-reconnects) that will kick you out after you connect for an hour. We don't handle reconnect properly. TODO: If I'm crazy enough I might look into moving this to GKE.
+
 <img width="1840" alt="image" src="https://github.com/maxrchung/skr/assets/3955187/5075ab8b-9fae-4d04-aa4c-2d2540415746">
 
 <img width="1840" alt="image" src="https://github.com/maxrchung/skr/assets/3955187/6b1e42ed-df86-4693-8539-27ac761a62c5">
 
-This is like a skribblio clone. Made over a weekend jam with React, HTML Canvas, and socket.io. By the way this only works on desktop, mobile is gonna have a bad time sorry.
 
 ## Prerequisites
 
@@ -41,7 +44,7 @@ npm install -g serve
 serve -s build
 ```
 
-The frontend is deployed with Firebase Hosting.
+Deploying to Firebase Hosting.
 
 ```bash
 firebase deploy
@@ -68,7 +71,7 @@ Running the server directly. You may have to forward port 4000 on your router if
 node index.js
 ```
 
-The backend is Dockerized and ran on Cloud Run.
+Building Docker image.
 
 ```bash
 docker build . -t maxrchung/skr
