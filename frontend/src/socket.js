@@ -2,7 +2,6 @@
 
 import { io } from "socket.io-client";
 
-// "undefined" means the URL will be computed from the `window.location` object
 const url =
   process.env.NODE_ENV === "production"
     ? process.env.REACT_APP_PROD_ENDPOINT
