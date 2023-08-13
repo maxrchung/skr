@@ -1,9 +1,18 @@
 // Reference: https://socket.io/get-started/chat
 
+import express from "express";
 import { Server } from "socket.io";
+import { createServer } from "http";
 import words from "./words/words.json" assert { type: "json" };
 
-const io = new Server(4000, {
+const app = express();
+
+// Health check? I think. Sort of following this example: https://github.com/ehacke/node-gke-cluster
+app.get("/", (_, res) => res.send("Healthy"));
+
+const server = createServer(app);
+
+const io = new Server(server, {
   cors: {
     origin: "*",
   },
@@ -308,3 +317,5 @@ io.on("connection", (socket) => {
     }
   });
 });
+
+server.listen(4000, () => console.log("Server listening"));
