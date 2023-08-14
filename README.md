@@ -1,13 +1,12 @@
 # skr
 
-Play: https://skr-project-dd5d6.web.app
+Play: https://skr.maxrchung.com
 
-This is like a [skribbl.io](https://skribbl.io) clone made over a weekend jam with React, HTML Canvas, and socket.io. It only works with desktop web as we don't support touches for mobile. There are some [limitations with Cloud Run and WebSockets](https://cloud.google.com/run/docs/triggering/websockets#client-reconnects) that will kick you out after you connect for an hour. We don't handle reconnect properly. TODO: If I'm crazy enough I might look into moving this to GKE.
+This is like a [skribbl.io](https://skribbl.io) clone made over a weekend jam with React, HTML Canvas, and socket.io. It mostly only works with desktop as we don't support touches for mobile. I'm currently trying to run this from Firebase Hosting and GKE. If Kubernetes costs/learning is too much I might switch it to Cloud Run.
 
 <img width="1840" alt="image" src="https://github.com/maxrchung/skr/assets/3955187/5075ab8b-9fae-4d04-aa4c-2d2540415746">
 
 <img width="1840" alt="image" src="https://github.com/maxrchung/skr/assets/3955187/6b1e42ed-df86-4693-8539-27ac761a62c5">
-
 
 ## Prerequisites
 
