@@ -30,6 +30,11 @@ export default function Canvas({ drawerId, lobbyId }) {
     drawerIdRef.current = drawerId;
   }, [drawerId]);
 
+  const lobbyIdRef = useRef(lobbyId);
+  useEffect(() => {
+    lobbyIdRef.current = lobbyId;
+  }, [lobbyId]);
+
   const [brushSize, setBrushSize] = useState(5);
   const brushSizeRef = useRef(brushSize);
   useEffect(() => {
@@ -73,7 +78,7 @@ export default function Canvas({ drawerId, lobbyId }) {
               ? eraserSizeRef.current
               : brushSizeRef.current,
         },
-        lobbyId,
+        lobbyId: lobbyIdRef.current,
       });
     };
 
@@ -94,7 +99,7 @@ export default function Canvas({ drawerId, lobbyId }) {
               ? eraserSizeRef.current
               : brushSizeRef.current,
         },
-        lobbyId,
+        lobbyId: lobbyIdRef.current,
       });
     };
 
