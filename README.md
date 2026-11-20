@@ -1,6 +1,6 @@
 # skr
 
-Play: https://skr.maxrchung.com
+Play: https://skr.max.rodeo
 
 This is like a [skribbl.io](https://skribbl.io) clone made over a weekend jam with React, HTML Canvas, and socket.io. It mostly only works with desktop as we don't support touch for mobile. I'm currently running this from Firebase Hosting and Cloud Run. **Note: Sessions time out after 1 hour, so you'll have to refresh the page.** This is [an artifact](https://cloud.google.com/run/docs/configuring/request-timeout) of using Cloud Run. Not much I can do, short of implementing cookies properly and/or looking at GKE(?).
 
