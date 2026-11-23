@@ -43,12 +43,6 @@ npm install -g serve
 serve -s build
 ```
 
-Deploying to Firebase Hosting.
-
-```bash
-firebase deploy
-```
-
 ## Backend
 
 Installing packages.
@@ -68,11 +62,4 @@ Running the server directly. You may have to forward port 4000 on your router if
 
 ```bash
 node index.js
-```
-
-Building Docker image.
-
-```bash
-docker build . -t maxrchung/skr
-docker push maxrchung/skr
 ```
